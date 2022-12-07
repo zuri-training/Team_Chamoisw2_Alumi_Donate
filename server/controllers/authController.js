@@ -1,9 +1,11 @@
 const { validationResult } = require("express-validator")
 const bcrypt = require('bcryptjs')
+const crypto = require('node:crypto')
 const User = require('./../models/userModel')
-
-const UserToken = require("../models/UserTokenModel")
+const UserToken = require("../models/userTokenModel")
+const ResetPassword = require('../models/resetPasswordModel')
 const { generateTokens } = require("../utils/generateToken")
+const { sendChangePasswordEmail } = require("../utils/email")
 
 //function to check if user already exists
 const userExist = async (_email) => {
@@ -137,21 +139,64 @@ const userLogout = async (req, res) => {
        }
      */
     try {
-        const userRefreshToken = await UserToken.findOne({ token: req.body.refreshToken });
+        const userRefreshToken = await UserToken.findOne({ token: req.body.refreshToken })
         if (!userRefreshToken)
         return res
             .status(200)
-            .json({ error: false, message: "Logged Out Sucessfully" });
+            .json({ error: false, message: "Logged Out Sucessfully" })
 
-        await userRefreshToken.remove();
-        res.status(200).json({ error: false, message: "Logged Out Sucessfully" });
+        await userRefreshToken.remove()
+        res.status(200).json({ error: false, message: "Logged Out Sucessfully" })
     } catch (error) {
-        res.status(500).json({ error: true, message: "Internal Server Error" });
+        res.status(500).json({ error: true, message: "Internal Server Error" })
     }
-};
+}
+
+const forgotPassword = async (req, res) => {
+    /**
+        #swagger.tags = ['Authentication']
+        #swagger.description = "Handles forgot password operation for changing a registered user's password"
+        #swagger.parameters['body'] = {
+            in: 'body',
+            type: 'object',
+            schema: {
+                $email: 'test-user@mail.com'
+            }
+        }
+     */
+    try{
+        const { email } = req.body
+        const userFound = await User.findOne({ email })
+    
+        if (!userFound) {
+        return res.status(400).json({ message: "User does not exist" })
+        }
+        const token = crypto.randomBytes(10).toString("hex")
+
+        const resetPass = await ResetPassword.findOneAndUpdate({ userId: userFound._id},{ userId: userFound._id, token },{upsert: true}).exec()
+    
+        const link = `${process.env.BASE_URL}/changepassword/${token}`
+    
+        const emailSent = await sendChangePasswordEmail({ email, link })
+        
+        if(!emailSent) {
+            await ResetPassword.findOneAndDelete({ userId: userFound._id, token }).exec()
+            throw new Error('Operation failed. Please try again')
+        }
+
+        res
+        .status(200)
+        .json({ message: "Password reset link has been sent to your email account" })
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({error: true, message: err.message})
+    }
+
+  }
 
   module.exports = {
     userSignup,
     userLogin,
-    userLogout
+    userLogout,
+    forgotPassword
   }
