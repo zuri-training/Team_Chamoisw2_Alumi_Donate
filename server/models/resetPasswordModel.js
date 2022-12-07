@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const resetPasswordSchema = new Schema({
   userId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     unique: true,
     required: true,
   },

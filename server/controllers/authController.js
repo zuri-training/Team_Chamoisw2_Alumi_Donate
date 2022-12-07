@@ -6,6 +6,9 @@ const UserToken = require("../models/userTokenModel")
 const ResetPassword = require('../models/resetPasswordModel')
 const { generateTokens } = require("../utils/generateToken")
 const { sendChangePasswordEmail } = require("../utils/email")
+const { verifyRefreshToken } = require("../middlewares/verifyRefreshToken")
+const jwt = require('jsonwebtoken')
+
 
 //function to check if user already exists
 const userExist = async (_email) => {
@@ -192,11 +195,100 @@ const forgotPassword = async (req, res) => {
         return res.status(500).json({error: true, message: err.message})
     }
 
-  }
+}
 
-  module.exports = {
+const changePassword = async (req, res) => {
+    /**
+       #swagger.tags = ['Authentication']
+       #swagger.description = 'Endpoint handles change of password'
+       #swagger.parameters['token'] = {
+          in: 'path',
+          type: 'string',
+          required: true,
+          schema: {
+            $token: 'c23349a7a135306ccece'
+          }
+       }
+       #swagger.parameters['body'] = {
+          in: 'body',
+          type: 'object',
+          required: true,
+          schema: {
+            $newpassword: 'mynewpass',
+            $confirmpassword: 'mynewpass'
+          }
+       }
+     */
+    try {
+      const { token }= req.params
+
+      if (!token) {
+        return res.status(400).json({ message: "token is required" })
+      } 
+
+        const { newpassword, confirmpassword } = req.body
+
+        if (newpassword !== confirmpassword) {
+          return res
+            .status(400)
+            .json({ message: "both passwords are not the same" })
+        }
+        
+        // Get the userId associated with the token
+        const user = await ResetPassword.findOne({ token },{ userId: true }).exec()
+
+        if(!user) return res.status(400).json({error: true, message: 'Token for password reset has expired.'})
+
+        // Hash the newpassword
+        const hashedPass = await bcrypt.hash(newpassword, 10)
+
+        // Update the password of the user
+        await User.findByIdAndUpdate(user.userId, { password: hashedPass }).exec()
+
+        // Remove the reset password document associated with the token
+        await ResetPassword.findOneAndDelete({ token }).exec()
+
+        res.status(200).json({ message: "password changed" })
+      
+    } catch (error) {
+      return res.status(400).json({ message: "invalid Token" })
+    }
+}
+
+const refreshToken = async (req, res) => {
+    /**
+       #swagger.tags = ['Authentication']
+       #swagger.parameters['body'] = {
+          in: 'body',
+          type: 'object',
+          required: true,
+          schema: {
+            $refreshToken: 'MddEQ7teWmpfC561Vw/wetyNeJY4ErDKEAgZfbUxSG2oUfN8LjruiG'
+          }
+       }
+     */
+    verifyRefreshToken(req.body.refreshToken)
+      .then(({ tokenDetails }) => {
+        const payload = { userId: tokenDetails.userId }
+        const accessToken = jwt.sign(
+          payload,
+          process.env.JWT_SECRET,
+          { expiresIn: "5h" }
+        );
+        res.status(200).json({
+          error: false,
+          accessToken,
+          message: "Access token created successfully",
+        });
+      })
+      .catch((err) => res.status(400).json(err));
+}
+
+module.exports = {
     userSignup,
     userLogin,
     userLogout,
-    forgotPassword
-  }
+    forgotPassword,
+    changePassword,
+    refreshToken
+}

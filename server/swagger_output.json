@@ -196,6 +196,99 @@
           }
         }
       }
+    },
+    "/api/auth/changepassword/{token}": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Endpoint handles change of password",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "c23349a7a135306ccece"
+                }
+              },
+              "required": [
+                "token"
+              ]
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "newpassword": {
+                  "type": "string",
+                  "example": "mynewpass"
+                },
+                "confirmpassword": {
+                  "type": "string",
+                  "example": "mynewpass"
+                }
+              },
+              "required": [
+                "newpassword",
+                "confirmpassword"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/auth/refreshToken": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refreshToken": {
+                  "type": "string",
+                  "example": "MddEQ7teWmpfC561Vw/wetyNeJY4ErDKEAgZfbUxSG2oUfN8LjruiG"
+                }
+              },
+              "required": [
+                "refreshToken"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   }
 }
