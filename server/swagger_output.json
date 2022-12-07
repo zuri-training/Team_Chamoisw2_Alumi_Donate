@@ -125,6 +125,40 @@
           }
         }
       }
+    },
+    "/api/auth/logout": {
+      "delete": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Sign out the authenticated user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refreshToken": {
+                  "type": "string",
+                  "example": "S70FIpFv3oe7rDpNSul3UjYZNAYTgU6uMmwarYeIMaLeI5BXGw"
+                }
+              },
+              "required": [
+                "refreshToken"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }

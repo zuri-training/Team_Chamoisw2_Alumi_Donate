@@ -124,7 +124,34 @@ const { email, password } = req.body
     }
 }
 
+const userLogout = async (req, res) => {
+    /**
+       #swagger.tags = ['Authentication']
+       #swagger.description = 'Sign out the authenticated user'
+       #swagger.parameters['body'] = {
+        in: 'body',
+        type: 'object',
+        schema: {
+            $refreshToken: 'S70FIpFv3oe7rDpNSul3UjYZNAYTgU6uMmwarYeIMaLeI5BXGw'
+        }
+       }
+     */
+    try {
+        const userRefreshToken = await UserToken.findOne({ token: req.body.refreshToken });
+        if (!userRefreshToken)
+        return res
+            .status(200)
+            .json({ error: false, message: "Logged Out Sucessfully" });
+
+        await userRefreshToken.remove();
+        res.status(200).json({ error: false, message: "Logged Out Sucessfully" });
+    } catch (error) {
+        res.status(500).json({ error: true, message: "Internal Server Error" });
+    }
+};
+
   module.exports = {
     userSignup,
-    userLogin
+    userLogin,
+    userLogout
   }
