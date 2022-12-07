@@ -19,11 +19,13 @@ const doc = {
     },
   },
 
-};
+}
 
 const outputFile = './swagger_output.json'
 const endpointsFiles = [
   './index.js',
 ]
 
-swaggerAutogen(outputFile, endpointsFiles, doc)
+swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
+  require('../server/index')
+})
