@@ -3,25 +3,24 @@ const pureUUID = require('pure-uuid');
 const College = require('./../models/collegeModel');
 
 const populateColleges = async(req, res) => {
-    const result = collegesJSON.reduce((parsedObj, val) => {
+    collegesJSON.forEach(async (val) => {
         const objKey = Object.keys(val)
     
-        const collegesLocation = objKey[0]
+        const collegesList = val[objKey[0]]
         
-        const collegesKeys = Object.keys(val[collegesLocation])
+        const collegesKeys = Object.keys(collegesList)
+        
+        collegesKeys.forEach(async key => {
+            if(collegesList[key] == "")return
+            await new College({
+                collegeName: collegesList[key],
+                location: objKey[0],
+                donationLink: JSON.stringify(await new pureUUID(4))
+            }).save()            
+        })
+        
+    })
     
-        let collegesInfo = {}
-    
-        for(let x = 0; x < collegesKeys.length; x++){
-            collegesInfo['location'] = collegesLocation
-            collegesInfo['name'] = val[collegesLocation][collegesKeys[x]]
-            collegesInfo['donationLink'] = new pureUUID(4);
-            parsedObj.push(collegesInfo)
-            collegesInfo = {}
-        }
-        return parsedObj
-    }, [])
-    const operationResult = await College.create(result)
-    res.status(201).json(operationResult)
+    res.status(201).json({message: "seeded"})
 } 
-module.exports = {populateColleges}
+module.exports = { populateColleges }
