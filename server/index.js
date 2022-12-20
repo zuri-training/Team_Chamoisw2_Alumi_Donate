@@ -7,6 +7,7 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
 
 const authRoutes = require('./routes/authRoutes')
+const collegeRoutes = require('./routes/collegeRoutes')
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 app.use("/api/auth", authRoutes)
+app.use("/api/colleges", collegeRoutes)
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 

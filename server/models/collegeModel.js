@@ -8,11 +8,15 @@ const collegeSchema = new Schema({
   },
   totalDonations: {
     type: Number,
-    required: true,
+    default: 0,
   },
   location: {
     type: String,
     required: true,
+  },
+  donationLink: {
+  type: String,
+  required: true,
   }
 });
 
