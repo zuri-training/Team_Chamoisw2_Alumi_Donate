@@ -26,13 +26,17 @@ const populateColleges = handleAsync(async(req, res) => {
 })
 
 const getAllColleges = handleAsync(async (req,res) => {
-    console.log('called')
     const colleges = await College.find({}, {_id: 1, name: 1,location: 1 }).exec()
-    console.log(colleges)
     res.status(200).json({ message: colleges })
 })
 
+const getDonationLink = handleAsync(async (req, res) => {
+    const collegeId = req.params.collegeId
+    const collegeFound = await College.findById(collegeId).exec()
+    res.status(200).json({ message: collegeFound.donationLink })
+})
 module.exports = { 
     populateColleges,
-    getAllColleges
+    getAllColleges,
+    getDonationLink
 }
