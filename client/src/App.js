@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 
 import "./index.scss";
 import "./App.scss";
-import FAQ from "./pages/components/FAQ/FAQ";
+import FAQPage from "./pages/components/FAQ/FAQ";
 import CheckoutPage from "./pages/components/Checkout/Checkout";
 import SuccessPage from "./pages/components/SuccessPage/SuccessPage";
 import LandingPage from "./pages/LandingPage"
@@ -17,7 +17,9 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/donate/:collegedonationlink/checkout" element={<CheckoutPage />} />
+        <Route path="/donate/success" element={<SuccessPage />} />
+        <Route path="/faq" element={<FAQPage />} />
       </Routes>
     </div>
   );

@@ -124,7 +124,8 @@ const userLogin = handleAsync( async (req, res, next) => {
             message: "user logged in successfully",
             token: accessToken,
             fullName: userFound.fullName,
-            college: userFound.collegeId.name
+            college: userFound.collegeId.name,
+            email: userFound.email
         })
 })
 
