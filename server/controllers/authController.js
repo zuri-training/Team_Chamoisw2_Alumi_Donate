@@ -4,10 +4,11 @@ const crypto = require('node:crypto')
 const User = require('./../models/userModel')
 const UserToken = require("../models/userTokenModel")
 const ResetPassword = require('../models/resetPasswordModel')
-const { generateTokens } = require("../utils/generateToken")
+const { generateToken } = require("../utils/generateToken")
 const { sendChangePasswordEmail } = require("../utils/email")
 const { verifyRefreshToken } = require("../middlewares/verifyRefreshToken")
 const jwt = require('jsonwebtoken')
+const { handleAsync } = require('./../utils/helpers')
 
 
 //function to check if user already exists
@@ -15,7 +16,7 @@ const userExist = async (_email) => {
     return await User.findOne({ email: _email }) ? true : false
 }
 
-const userSignup = async (req, res, next) => {
+const userSignup = handleAsync( async (req, res, next) => {
     /** 
      * #swagger.tags = ['Authentication']
      * #swagger.description = 'Register User' 
@@ -68,6 +69,7 @@ const userSignup = async (req, res, next) => {
         const createdUser = await newUser.save()
 
         res.status(201).json({
+          error: false,
           message: "New User has been created.",
           id: createdUser._id,
           email: createdUser.email,
@@ -79,9 +81,9 @@ const userSignup = async (req, res, next) => {
       }
       return res.status(error.statusCode).json({ message: "Signup failed", error: error })
     }
-}
+})
 
-const userLogin = async (req, res, next) => {
+const userLogin = handleAsync( async (req, res, next) => {
 /**
  * #swagger.tags = ['Authentication']
  * #swagger.description = 'Login user'
@@ -96,38 +98,35 @@ const userLogin = async (req, res, next) => {
     }
 */
 
-const { email, password } = req.body
-    try {    
+        const { email, password } = req.body   
+
         if (!email || !password) {
             return res.status(400).json("Please provide email and password")
         }
 
-        const userFound = await User.findOne({ email })
+        let userFound = await User.findOne({ email })
 
         if (!userFound) {
-            return res.status(400).json("A user for this email could not be found!")
+            return res.status(400).json({message: "A user for this email could not be found!"})
         }
         
         const passwordMatch = await bcrypt.compare(password,userFound.password)
 
         if (!passwordMatch) {
-            return res.status(400).json("Wrong password!")
+            return res.status(400).json({message: "Wrong password!"})
         }
 
-        const { accessToken, refreshToken } = await generateTokens(userFound)
+        userFound = await userFound.populate('collegeId')
+
+        const { accessToken } = await generateToken(userFound)
 
         return res.status(200).json({
             message: "user logged in successfully",
             token: accessToken,
-            refreshToken: refreshToken,
-            userId: userFound._id.toString()
+            fullName: userFound.fullName,
+            college: userFound.collegeId.name
         })
-    } catch (err) {
-        if (!err.statusCode) err.statusCode = 500
-        
-        return res.status(err.statusCode).json({ message: "Sign-in failed", err: err })
-    }
-}
+})
 
 const userLogout = async (req, res) => {
     /**
@@ -155,7 +154,7 @@ const userLogout = async (req, res) => {
     }
 }
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = handleAsync(async (req, res) => {
     /**
         #swagger.tags = ['Authentication']
         #swagger.description = "Handles forgot password operation for changing a registered user's password"
@@ -195,9 +194,9 @@ const forgotPassword = async (req, res) => {
         return res.status(500).json({error: true, message: err.message})
     }
 
-}
+})
 
-const changePassword = async (req, res) => {
+const changePassword = handleAsync( async (req, res) => {
     /**
        #swagger.tags = ['Authentication']
        #swagger.description = 'Endpoint handles change of password'
@@ -253,9 +252,9 @@ const changePassword = async (req, res) => {
     } catch (error) {
       return res.status(400).json({ message: "invalid Token" })
     }
-}
+})
 
-const refreshToken = async (req, res) => {
+const refreshToken = handleAsync(async (req, res) => {
     /**
        #swagger.tags = ['Authentication']
        #swagger.parameters['body'] = {
@@ -282,7 +281,7 @@ const refreshToken = async (req, res) => {
         });
       })
       .catch((err) => res.status(400).json(err));
-}
+})
 
 module.exports = {
     userSignup,
