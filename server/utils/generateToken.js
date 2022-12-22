@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
-const UserToken = require("../models/userTokenModel.js")
 
-const generateTokens = async (user) => {
+const generateToken = async (user) => {
     try {
         const payload = { userId: user._id }
         const accessToken = jwt.sign(
@@ -9,20 +8,11 @@ const generateTokens = async (user) => {
             process.env.JWT_SECRET,
             { expiresIn: "5h" }
         );
-        const refreshToken = jwt.sign(
-            payload,
-            process.env.REFRESH_TOKEN,
-            { expiresIn: "1w" }
-        )
-
-        const userToken = await UserToken.findOne({ userId: user._id });
-        if (userToken) await userToken.remove()
-
-        await new UserToken({ userId: user._id, token: refreshToken }).save();
-        return Promise.resolve({ accessToken, refreshToken })
+       
+        return Promise.resolve({ accessToken })
     } catch (err) {
         return Promise.reject(err)
     }
 };
 
-module.exports = { generateTokens }
+module.exports = { generateToken }

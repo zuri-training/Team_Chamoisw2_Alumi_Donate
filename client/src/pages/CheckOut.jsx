@@ -1,7 +1,8 @@
 import React from 'react';
+import { PaystackHook } from '../config/paystack.config';
 
 const CheckOut = () => {
-  return <div></div>;
+  return <PaystackHook />;
 };
 
 export default CheckOut;
