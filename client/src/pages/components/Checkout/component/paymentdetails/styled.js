@@ -65,6 +65,8 @@ export const numberInput = styled.input`
   background-color: #f7f7f7;
 `;
 
+export const nameInput = numberInput; 
+
 export const inputh3 = styled.h3`
   align-self: flex-start;
   color: #071d57;

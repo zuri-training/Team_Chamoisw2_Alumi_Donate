@@ -1,36 +1,86 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as styled from "./styled";
+import PaystackHook from './../../../../../config/paystack.config';
+import Cards from 'react-credit-cards';
+import 'react-credit-cards/es/styles-compiled.css';
 
 function Card() {
+  const [card, setCard] = useState({
+    "cvc": '',
+    "expiry": '',
+    "name": '',
+    "number": '',
+    "amount": 0,
+    "email": ''
+  })
+
+  useEffect(() => {
+    const auth = JSON.parse(localStorage.getItem('auth'))
+   
+    if(auth === null) return
+
+    setCard({...card, email: auth.email})
+  },[])
+
+  const handleInputChange = (e, inputField) => {
+    const { name, value } = e.target;
+    
+    if(inputField === "month"){
+      const expiryDate = card.expiry.split("/");
+      setCard({...card, expiry: expiryDate.length === 2 ? `${value}/${expiryDate[1]}`: value });
+      return
+    }else if(inputField === "year"){
+      const expiryDate = card.expiry.split("/");
+      setCard({...card, expiry: expiryDate.length === 2 ? `${expiryDate[0]}/${value}`: `01/${value}` });
+      return
+    } 
+    setCard({...card, [name]: value });
+  }
+
+  const FormValid = () => {
+    return Object.values(card).every(value => { return value !== "" && value !== 0})
+  }
+
   return (
     <>
       <styled.paymentDetails>Payment Details</styled.paymentDetails>
       <styled.Cart>
         <styled.Details>
+        <Cards
+          cvc={card.cvc}
+          expiry={card.expiry}
+          name={card.name}
+          number={card.number}
+        />
           <styled.cardNumber>Card Number</styled.cardNumber>
           <styled.digit>Enter the 10 digit number on the card</styled.digit>
 
           <styled.inputWrapper>
-            <styled.inputImages>
-              <styled.visaImages src="./img/Group.png" alt="circlelogo" />
-              <styled.visaImages src="./img/path3789.png" alt="Visa logo" />
-            </styled.inputImages>
+            <styled.numberInput type="number" name="number" onChange={handleInputChange} />
+          </styled.inputWrapper>
 
-            <styled.numberInput type="text" />
+          <styled.digit>Email</styled.digit>
+          <styled.inputWrapper>
+            <styled.nameInput type="text" disabled value={card.email} />
+          </styled.inputWrapper>
+
+          <styled.digit>Enter the name on your card</styled.digit>
+          <styled.inputWrapper>
+            <styled.nameInput type="text" name="name" onChange={handleInputChange} />
           </styled.inputWrapper>
 
           <styled.inputh3>Enter the amount</styled.inputh3>
-          <styled.amountInput type="text" />
+          <styled.amountInput type="number" name="amount" onChange={handleInputChange}/>
 
           <styled.cvvContainer>
             <div>
-              <styled.Cvv>CVV Number</styled.Cvv>
+              <styled.Cvv>CVC Number</styled.Cvv>
               <styled.threeDigit>
                 Enter the three digit at the back of the card
               </styled.threeDigit>
             </div>
             <styled.cvvInput>
-              <styled.inputDigit type="text" />
+              <styled.inputDigit type="text" name="cvc" onChange={handleInputChange}/>
             </styled.cvvInput>
           </styled.cvvContainer>
 
@@ -40,13 +90,13 @@ function Card() {
               <styled.expiration>Enter the expiration date</styled.expiration>
             </div>
             <styled.Calendar>
-              <styled.month type="text" placeholder="MM" />
+              <styled.month type="number" placeholder="MM" name="expiry" onChange={(e) => handleInputChange(e, "month")} />
               <p>/</p>
-              <styled.year type="text" placeholder="YY" />
+              <styled.year type="number" placeholder="YY" name="expiry" onChange={(e) => handleInputChange(e, "year")} />
             </styled.Calendar>
           </styled.expireContainer>
 
-          <styled.donate>Donate Now</styled.donate>
+          { FormValid() ? <PaystackHook paymentDetails={card} /> : "" }
         </styled.Details>
 
         <styled.untitledContainer>

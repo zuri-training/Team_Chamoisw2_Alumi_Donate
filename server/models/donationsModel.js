@@ -15,9 +15,13 @@ const donationsSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
+  },
+  paymentReference: {
+    type: Number,
+    required: true
   }
 },{
   timestamps: true
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Donation", donationsSchema);

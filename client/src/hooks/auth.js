@@ -67,10 +67,9 @@ const useAuth = () => {
                     ...message
                 });
 
-                console.log(response.data)
+                localStorage.setItem('auth', JSON.stringify(response.data))
 
                 navigate("/dashboard")
-                return
             }
         }catch(err){
             displayErrorMessages(err)

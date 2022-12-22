@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./component/header/header";
-import Card from "./component/paymentdetails/paymentdetails"
+import PaymentForm from "./component/paymentdetails/paymentdetails"
 import Footer from "./component/footer/footer";
+import { useParams } from "react-router-dom";
 
 
-function Checkout() {
+function Checkout(props) {
+  const routeParams = useParams()
+  const [donationLink, setDonationLink] = useState('')
+  
+  useEffect(() => {
+    setDonationLink(routeParams.collegedonationlink)
+  }, [])
+
   return (
     <div>
       <Header />
-      <Card />
+      <PaymentForm donationlink={donationLink} />
       <Footer />
     </div>
    
