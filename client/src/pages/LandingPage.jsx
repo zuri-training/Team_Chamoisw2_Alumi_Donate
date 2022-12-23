@@ -56,13 +56,13 @@ const LandingPage = () => {
             <div className="col-md-4">
               <div className="box d-flex justify-content-center">
               The Alumni Donation platform helped us get off the ground with our project. After the donation $60,000 in funding from Alumni of our Institution from all over the world. Your help was instrumental in this success Of our Lecture halls project.
-              <br /> <img src={testimonial1} />
+              <br /> <img src={testimonial1} alt="testimonial1" />
               </div>
             </div>
             <div className="col-md-4">
               <div className="box d-flex justify-content-center">
               Your generosity and commitment is exactly the kind of community involvement we need to keep The Nigerian Universities going strong. The many scholarships, grants, and financial aid opportunities to University students are a testament to the support of the alumni, of the University. 
-              <br /><img src={testimonial2} />
+              <br /><img src={testimonial2} alt="testimonial2" />
               </div>
               
             </div>
