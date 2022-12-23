@@ -6,7 +6,7 @@ import 'react-credit-cards/es/styles-compiled.css';
 
 function Card() {
   const [card, setCard] = useState({
-    "cvc": '',
+    "cvv": '',
     "expiry": '',
     "name": '',
     "number": '',
@@ -54,47 +54,49 @@ function Card() {
         />
           <styled.cardNumber>Card Number</styled.cardNumber>
           <styled.digit>Enter the 10 digit number on the card</styled.digit>
-
-          <styled.inputWrapper>
+          <styled.inputWrapper  style={{marginBottom: "20px"}}>
             <styled.numberInput type="number" name="number" onChange={handleInputChange} />
           </styled.inputWrapper>
 
           <styled.digit>Email</styled.digit>
-          <styled.inputWrapper>
+          <styled.inputWrapper style={{marginBottom: "20px"}}>
             <styled.nameInput type="text" disabled value={card.email} />
           </styled.inputWrapper>
 
           <styled.digit>Enter the name on your card</styled.digit>
-          <styled.inputWrapper>
+          <styled.inputWrapper style={{marginBottom: "20px"}}>
             <styled.nameInput type="text" name="name" onChange={handleInputChange} />
           </styled.inputWrapper>
 
           <styled.inputh3>Enter the amount</styled.inputh3>
-          <styled.amountInput type="number" name="amount" onChange={handleInputChange}/>
+          <styled.amountInput style={{marginBottom: "20px"}} type="number" name="amount" onChange={handleInputChange}/>
 
-          <styled.cvvContainer>
-            <div>
-              <styled.Cvv>CVC Number</styled.Cvv>
-              <styled.threeDigit>
-                Enter the three digit at the back of the card
-              </styled.threeDigit>
+          <div className="row mb-3">
+            <div className="col-md-9">
+              <styled.cardNumber style={{ marginTop: "0px" }}>CVV Number</styled.cardNumber>
+              <styled.digit style={{ fontSize: "0.8rem", textAlign: "start" }}>
+              Enter the three digit at the back of the card
+              </styled.digit>
             </div>
-            <styled.cvvInput>
-              <styled.inputDigit type="text" name="cvc" onChange={handleInputChange}/>
-            </styled.cvvInput>
-          </styled.cvvContainer>
 
-          <styled.expireContainer>
-            <div>
-              <styled.expiryDate>Expiry Date</styled.expiryDate>
-              <styled.expiration>Enter the expiration date</styled.expiration>
+            <div className="col-md-3">
+                <styled.inputDigit style={{width: "80px"}}  type="text" name="cvv" onChange={handleInputChange}/>
             </div>
-            <styled.Calendar>
-              <styled.month type="number" placeholder="MM" name="expiry" onChange={(e) => handleInputChange(e, "month")} />
-              <p>/</p>
-              <styled.year type="number" placeholder="YY" name="expiry" onChange={(e) => handleInputChange(e, "year")} />
-            </styled.Calendar>
-          </styled.expireContainer>
+          </div>
+
+          <div className="row align-items-center justify-content-between">
+            <div className="col-md-7">
+              <styled.cardNumber>Expiry Date</styled.cardNumber>
+              <styled.expiration className="text-start">Enter the expiration date</styled.expiration>
+            </div>
+            <div className="col mx-1">
+              <styled.inputDigit style={{width: "100%"}} className="text-center" type="number" placeholder="MM" name="expiry" onChange={(e) => handleInputChange(e, "month")} />
+            </div>  
+              /
+            <div className="col mx-1">
+              <styled.inputDigit style={{width: "100%"}} className="text-center" type="number" placeholder="YY" name="expiry" onChange={(e) => handleInputChange(e, "year")} />
+            </div>
+          </div>
 
           { FormValid() ? <PaystackHook paymentDetails={card} /> : "" }
         </styled.Details>

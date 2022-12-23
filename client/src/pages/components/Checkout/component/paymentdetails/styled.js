@@ -28,11 +28,13 @@ export const cardNumber = styled.h3`
   color: #071d57;
   font-family: "Montserrat";
   text-align: start;
+  margin-top: 2rem;
 `;
 
 export const digit = styled.p`
   color: #21212180;
   align-self: flex-start;
+  margin-bottom: 0px;
 `;
 
 export const inputWrapper = styled.div`
@@ -63,6 +65,9 @@ export const numberInput = styled.input`
   border: none;
   height: 45px;
   background-color: #f7f7f7;
+  font-size: 20px;
+  overflow-x: scroll;
+  text-indent: 10px;
 `;
 
 export const nameInput = numberInput; 

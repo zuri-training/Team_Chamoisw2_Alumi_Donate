@@ -9,6 +9,8 @@ import SuccessPage from "./pages/components/SuccessPage/SuccessPage";
 import LandingPage from "./pages/LandingPage"
 import SignupPage from "./pages/SignUp"
 import SigninPage from "./pages/SignIn"
+import DashboardPage from "./pages/Dashboard";
+import ProtectedRoutes from "./pages/components/ProtectedRoutes";
 
 function App() {
   return (
@@ -17,9 +19,22 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/donate/:collegedonationlink/checkout" element={<CheckoutPage />} />
+        <Route 
+          path="/donate/:donationLink/checkout" 
+          element={
+            <ProtectedRoutes>
+              <CheckoutPage />
+            </ProtectedRoutes>
+          } />
         <Route path="/donate/success" element={<SuccessPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoutes>
+              <DashboardPage />
+            </ProtectedRoutes>
+          } />
       </Routes>
     </div>
   );

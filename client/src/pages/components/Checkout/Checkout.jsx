@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Header from "./component/header/header";
+import Header from "./../Header";
 import PaymentForm from "./component/paymentdetails/paymentdetails"
-import Footer from "./component/footer/footer";
+import Footer from "./../Footer";
 import { useParams } from "react-router-dom";
 
 
@@ -10,8 +10,8 @@ function Checkout(props) {
   const [donationLink, setDonationLink] = useState('')
   
   useEffect(() => {
-    setDonationLink(routeParams.collegedonationlink)
-  }, [])
+    setDonationLink(routeParams.donationLink)
+  }, [routeParams.donationLink, donationLink])
 
   return (
     <div>
