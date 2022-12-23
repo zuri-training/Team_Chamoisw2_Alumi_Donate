@@ -1,5 +1,10 @@
 import React,{ useState } from 'react';
 import useAuth from './../hooks/auth'
+import LoginImage from './../assets/images/Secure-login.svg'
+import './styles/signin.scss'
+import Header from './../pages/components/Header'
+import Footer from './../pages/components/Footer'
+import { Link } from 'react-router-dom'
 
 const SignIn = () => {
   const [formValues, setFormValues] = useState({
@@ -23,9 +28,17 @@ const SignIn = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="sign-in row justify-content-center text-left">
+     <Header />
+     <div className='col-md-10 d-flex flex-column justify-content-start align-items-start mt-1'>
+     <h4>Welcome</h4>
+     <p>Input email and password to login into your account</p>
+     </div>
+     <div className="col-md-5 d-flex align-items-center justify-content-end">
+      <form onSubmit={handleSubmit} className="w-100">
       <input
         type="email"
+        className='form-control mb-3 w-100'
         name="email"
         placeholder="Email"
         value={formValues.email}
@@ -33,14 +46,24 @@ const SignIn = () => {
       />
       <input
         type="password"
+        className='form-control mb-3 w-100'
         name="password"
         placeholder="Password"
         value={formValues.confirmPassword}
         onChange={handleChange}
       />
-      
-      <button type='submit'>Login</button>
+      <div className='row mb-5'><div className='col-12 d-flex justify-content-between'><span><input type={"checkbox"} /> Remember me</span> <span>Forgot Password?</span></div></div>
+      <button type='submit' className='login-button'>Login</button>
+      <div className='text-start mt-3'>Don't have an account? <Link to="/signup">Sign up</Link></div>
       </form>
+      </div>
+      <div className="col-md-5 d-flex align-items-end ">
+      <img src={LoginImage} alt="secure-login" style={{width: "100%", height: "100vh"}} />
+      </div>
+
+      <Footer />
+    </div>
+    
   )
 };
 

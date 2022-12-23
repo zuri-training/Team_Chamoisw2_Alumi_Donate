@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import { Toast } from './../pages/components/ToastAlert';
@@ -11,29 +10,14 @@ const useAuth = () => {
     }
  
     const displayErrorMessages = (error) => {
-        const {response: {data, status}} = error
-        const message = { title: data.message }
-
-        if (status === 400) {
             Toast.fire({
                 icon: "error",
-                ...message
+                title: error.response ? error.response.data.message : error.message
             });
-        } else if (status === 500) {
-            Toast.fire({
-                icon: "error",
-                ...message
-            });
-        } else {
-            Toast.fire({
-                icon: "error",
-                title: "Something went wrong"
-            });
-        }
     }
 
     const signupUser = async (formValues) => {
-        if(!formValid(formValues)) return
+        //if(!formValid(formValues)) return
 
         try{
             const response = await axios.post("/auth/signup", formValues);
@@ -48,7 +32,10 @@ const useAuth = () => {
                 navigate("/login")
                 return
             }else{
-                displayErrorMessages(response)
+                Toast.fire({
+                    icon: "error",
+                    title: response.data.message
+                });
             }
         }catch(err){
             displayErrorMessages(err)
@@ -73,7 +60,10 @@ const useAuth = () => {
 
                 navigate("/dashboard")
             }else{
-                displayErrorMessages(response)
+                Toast.fire({
+                    icon: "error",
+                    title: "One or more login details is incorrect"
+                });
             }
         }catch(err){
             displayErrorMessages(err)

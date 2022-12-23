@@ -59,7 +59,7 @@ function SignUp() {
     <Header />
     <div className='row justify-content-center'>
       <div className="col-md-5 d-flex justify-content-end">
-        <img src={SignupImage} alt="signup-image" style={{width: "100%", height: "100vh"}} />
+        <img src={SignupImage} alt="signup" style={{width: "100%", height: "100vh"}} />
       </div>
       <div className="col-md-5 d-flex flex-column justify-content-start">
         <h1 className='mt-5'>Sign up to Alumni Donate</h1>
