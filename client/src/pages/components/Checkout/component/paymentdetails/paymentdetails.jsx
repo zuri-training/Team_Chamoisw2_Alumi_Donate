@@ -20,7 +20,7 @@ function Card() {
     if(auth === null) return
 
     setCard({...card, email: auth.email})
-  },[])
+  },[card])
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;
