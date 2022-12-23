@@ -37,7 +37,7 @@ const useAuth = () => {
 
         try{
             const response = await axios.post("/auth/signup", formValues);
-            const message = {title: response.data.message};
+            const message = {title: "Registration successful"};
 
             // This implies the signup was successful
             if(response.status === 201){
@@ -47,6 +47,8 @@ const useAuth = () => {
                 });
                 navigate("/login")
                 return
+            }else{
+                displayErrorMessages(response)
             }
         }catch(err){
             displayErrorMessages(err)
@@ -70,6 +72,8 @@ const useAuth = () => {
                 localStorage.setItem('auth', JSON.stringify(response.data))
 
                 navigate("/dashboard")
+            }else{
+                displayErrorMessages(response)
             }
         }catch(err){
             displayErrorMessages(err)
