@@ -14,7 +14,7 @@ function Footer() {
         <img src="./img/Group 39.png" alt="Socials logo" />
         </styled.Logos>
         <styled.emailWrapper>
-        <styled.emailInput type="email" placeholder="Enter E-mail Address" />
+        <styled.emailInput type="email" className="form-control mb-0" placeholder="Enter E-mail Address" />
         <styled.emailSubscribe>Subscribe</styled.emailSubscribe>
         </styled.emailWrapper>
         <styled.Copyright>

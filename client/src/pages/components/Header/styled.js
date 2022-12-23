@@ -13,8 +13,11 @@ export const imageContainer = styled.div`
 
 export const Container = styled.div`
   display: flex;
-  margin-right: 400px;
-  gap: 130px;
+  margin-left: 10%;
+  justify-content: space-around;
+  width: 50vw;
   margin-bottom: 30px;
   color: #071d57;
 `;
+
+

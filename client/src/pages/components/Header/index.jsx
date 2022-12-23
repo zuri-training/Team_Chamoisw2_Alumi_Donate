@@ -1,6 +1,7 @@
 import React from "react";
 import * as styled from "./styled";
-
+import { Link } from 'react-router-dom'
+import './../../styles/navbar.scss'
 
 function Header() {
   return (
@@ -16,7 +17,12 @@ function Header() {
         <h5 className="nav-contact">Contact</h5>
       </styled.Container>
 
-      
+        <Link to="/login" className="nav-link-button">
+          <button className="signin" type="button">Sign-in</button>
+        </Link>
+        <Link to="/signup" className="nav-link-button">
+          <button className="signup" type="button">Sign-up</button>
+        </Link>
     </styled.Header>
   );
 }
