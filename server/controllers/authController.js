@@ -125,6 +125,7 @@ const userLogin = handleAsync( async (req, res, next) => {
             token: accessToken,
             fullName: userFound.fullName,
             college: userFound.collegeId.name,
+            donationLink: userFound.collegeId.donationLink, 
             email: userFound.email
         })
 })
