@@ -35,7 +35,7 @@ function SignUp() {
       }
      
     })()
-  },[])
+  },[getColleges])
 
   const handleChange = e => {
     setFormValues({

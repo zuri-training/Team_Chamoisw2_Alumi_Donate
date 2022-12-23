@@ -27,9 +27,8 @@ const verifyTransaction = handleAsync(async(req,res) => {
                 userId,
                 collegeId,
             }).save()
-
-            console.log('donation saved:', donationSaved);
         }
+        
         res.status(paystackResponse.status).json({message: paystackResponse.data.message, status: paystackResponse.data.status})
     }catch(err){
         console.log(err)
