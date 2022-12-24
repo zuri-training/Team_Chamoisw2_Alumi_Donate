@@ -52,7 +52,6 @@ const PaystackHook = ({paymentDetails}) => {
             }
           })
           
-          console.log('from server: ', verificationResponse)
 
           if(verificationResponse.status !== 200){
             throw new Error("Operation failed")

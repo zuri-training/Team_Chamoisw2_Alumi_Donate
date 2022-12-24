@@ -1,0 +1,27 @@
+.selected-amount{
+    background: #071D57 !important;
+    color: white !important;
+}
+
+.enter-amount{
+    height: 100px;
+    width: 100%;
+
+    .outline-0:focus, .outline-0:focus-visible{
+        outline: 0px;
+    }
+}
+
+.proceed-button{
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 10px 0px;
+
+    &.border-top-left-radius{
+        border-top-left-radius: 10px;
+    }
+    
+    &.border-bottom-right-radius{
+        border-bottom-right-radius: 10px;
+    }
+}
