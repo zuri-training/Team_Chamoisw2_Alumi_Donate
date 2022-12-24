@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator")
 const bcrypt = require('bcryptjs')
-const crypto = require('node:crypto')
+const crypto = require('crypto')
 const User = require('./../models/userModel')
 const UserToken = require("../models/userTokenModel")
 const ResetPassword = require('../models/resetPasswordModel')
