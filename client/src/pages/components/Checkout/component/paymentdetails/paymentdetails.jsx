@@ -34,7 +34,7 @@ function Card() {
     } 
     setInfos({...infos, institution: auth.college, uniqueId: auth.donationLink})
     setCard({...card, email: auth.email, amount: parseInt(localStorage.getItem('amountToDonate'))})
-  },[navigate])
+  })
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;
