@@ -1,14 +1,16 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import * as styled from "./styled";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { userIsAuth } from "../ProtectedRoutes";
 import './../../styles/navbar.scss'
 
 function Header() {
+  const navigate = useNavigate()
 
-  useLayoutEffect(() => {
-
-  }, [])
+  const logout = () => {
+    localStorage.clear()
+    navigate('/login')
+  }
 
   return (
     <styled.Header>
@@ -24,7 +26,7 @@ function Header() {
       </styled.Container>
 
       { 
-      !userIsAuth() ?<>
+        !userIsAuth() ?<>
           <Link to="/login" className="nav-link-button">
             <button className="signin" type="button">Sign-in</button>
           </Link>
@@ -32,11 +34,7 @@ function Header() {
             <button className="signup" type="button">Sign-up</button>
           </Link>
         </>
-        : <>
-            <Link to="/logout" className="nav-link-button">
-              <button className="signup btn btn-danger" type="button">Logout</button>
-            </Link>
-          </>
+        : <button className="signup btn btn-small btn-danger mr-3" type="button" onClick={logout}>Logout</button>
       }
     </styled.Header>
   );

@@ -37,8 +37,10 @@ const useAuth = () => {
                     title: response.data.message
                 });
             }
+            return
         }catch(err){
             displayErrorMessages(err)
+            return
         }
     }
 
@@ -57,6 +59,7 @@ const useAuth = () => {
                 });
 
                 localStorage.setItem('auth', JSON.stringify(response.data))
+                localStorage.setItem('donationLink', response.data.donationLink)
 
                 navigate("/dashboard")
             }else{
@@ -65,8 +68,10 @@ const useAuth = () => {
                     title: "One or more login details is incorrect"
                 });
             }
+            return
         }catch(err){
             displayErrorMessages(err)
+            return
         }
     }
 

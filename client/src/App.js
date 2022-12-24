@@ -10,6 +10,7 @@ import LandingPage from "./pages/LandingPage"
 import SignupPage from "./pages/SignUp"
 import SigninPage from "./pages/SignIn"
 import DashboardPage from "./pages/Dashboard";
+import DonationLinkPage from "./pages/DonationLink";
 import ProtectedRoutes from "./pages/components/ProtectedRoutes";
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
         <Route path="/login" element={<SigninPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route 
-          path="/donate/:donationLink/checkout" 
+          path="/donate/checkout" 
           element={
             <ProtectedRoutes>
               <CheckoutPage />
@@ -28,6 +29,11 @@ function App() {
           } />
         <Route path="/donate/success" element={<SuccessPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route 
+          path="/donate/:donationLink" 
+          element={
+              <DonationLinkPage />
+          } />
         <Route 
           path="/dashboard" 
           element={

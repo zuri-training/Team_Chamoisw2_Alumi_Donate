@@ -3,42 +3,94 @@ import * as styled from "./styled";
 import PaystackHook from './../../../../../config/paystack.config';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
+import { useNavigate } from "react-router-dom";
+import { NumericKeyboard } from 'react-numeric-keyboard';
 
 function Card() {
   const [card, setCard] = useState({
-    "cvv": '',
+    "cvc": '',
     "expiry": '',
     "name": '',
     "number": '',
     "amount": 0,
-    "email": ''
+    "email": '',
+    "month": 0,
+    "year": 0
   })
+  const [infos, setInfos] = useState({
+    vat: 0,
+    institution: '',
+    uniqueId: ''
+  })
+  const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const auth = JSON.parse(localStorage.getItem('auth'))
    
-    if(auth === null) return
-
-    setCard({...card, email: auth.email})
-  },[card])
+    if(auth === null){
+      navigate('/login')
+      return
+    } 
+    setInfos({...infos, institution: auth.college, uniqueId: auth.donationLink})
+    setCard({...card, email: auth.email, amount: parseInt(localStorage.getItem('amountToDonate'))})
+  },[navigate])
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;
-    
-    if(inputField === "month"){
-      const expiryDate = card.expiry.split("/");
-      setCard({...card, expiry: expiryDate.length === 2 ? `${value}/${expiryDate[1]}`: value });
+
+    //Validate CVV
+    if(name === 'cvc'){
+      
+      setCard(prev => {
+        return {...prev, 'cvc': value}
+      })
+      
+      if(value.length === 3){ setIsOpen(false); }
+
       return
-    }else if(inputField === "year"){
-      const expiryDate = card.expiry.split("/");
-      setCard({...card, expiry: expiryDate.length === 2 ? `${expiryDate[0]}/${value}`: `01/${value}` });
+    }
+
+    //Validate name
+    if(name === 'name'){
+      //if it is a number and value is not undefined, return
+      if(value && Number(value)) return
+    }
+
+    //Validate card number
+    if(name === 'number'){
+      //if it is not a number, return
+      if(isNaN(Number(value)) || value.length > 19) return
+    }
+
+    //Validate amount
+    if(name === 'amount'){
+      //if it is not a number, return
+      if(isNaN(Number(value))) return
+    }
+
+    //Validate month
+    if(inputField === "month"){
+      if(value.length > 2)return
+
+      setCard({...card, month: value, expiry: `${value}/${card.year}`})
+
+      return
+    }
+    
+    //Validate Year
+    if(inputField === "year"){
+      if(value.length > 2)return
+
+      setCard({...card, year: value, expiry: `${card.month}/${value}`})
       return
     } 
+
     setCard({...card, [name]: value });
   }
 
   const FormValid = () => {
-    return Object.values(card).every(value => { return value !== "" && value !== 0})
+    return Object.values(card).every(value => { return value !== "" && value !== 0 && card.expiry.length >= 4})
   }
 
   return (
@@ -46,16 +98,10 @@ function Card() {
       <styled.paymentDetails>Payment Details</styled.paymentDetails>
       <styled.Cart>
         <styled.Details>
-        <Cards
-          cvc={card.cvc}
-          expiry={card.expiry}
-          name={card.name}
-          number={card.number}
-        />
           <styled.cardNumber>Card Number</styled.cardNumber>
           <styled.digit>Enter the 10 digit number on the card</styled.digit>
-          <styled.inputWrapper  style={{marginBottom: "20px"}}>
-            <styled.numberInput type="number" name="number" onChange={handleInputChange} />
+          <styled.inputWrapper  style={{marginBottom: "20px"}} className="custom-border">
+            <styled.numberInput type="text" name="number" value={card.number} onChange={handleInputChange} />
           </styled.inputWrapper>
 
           <styled.digit>Email</styled.digit>
@@ -65,11 +111,13 @@ function Card() {
 
           <styled.digit>Enter the name on your card</styled.digit>
           <styled.inputWrapper style={{marginBottom: "20px"}}>
-            <styled.nameInput type="text" name="name" onChange={handleInputChange} />
+            <styled.nameInput type="text" name="name" value={card.name} onChange={handleInputChange} />
           </styled.inputWrapper>
 
-          <styled.inputh3>Enter the amount</styled.inputh3>
-          <styled.amountInput style={{marginBottom: "20px"}} type="number" name="amount" onChange={handleInputChange}/>
+          <styled.inputh3>Amount to donate</styled.inputh3>
+            <styled.inputWrapper style={{marginBottom: "20px"}}>
+            <styled.numberInput type="text" name="amount" value={card.amount} onChange={handleInputChange}/>
+          </styled.inputWrapper>
 
           <div className="row mb-3">
             <div className="col-md-9">
@@ -80,7 +128,10 @@ function Card() {
             </div>
 
             <div className="col-md-3">
-                <styled.inputDigit style={{width: "80px"}}  type="text" name="cvv" onChange={handleInputChange}/>
+              <NumericKeyboard isOpen={isOpen} onChange={(value, name) => {
+                  handleInputChange({target:{ name:'cvc', value: value.value }})
+              }} />
+              <input type="text" className="form-control" onClick={() => { setCard({...card, cvc: ''}); setIsOpen(true)}} contentEditable="false" value={card.cvc} />
             </div>
           </div>
 
@@ -90,32 +141,36 @@ function Card() {
               <styled.expiration className="text-start">Enter the expiration date</styled.expiration>
             </div>
             <div className="col mx-1">
-              <styled.inputDigit style={{width: "100%"}} className="text-center" type="number" placeholder="MM" name="expiry" onChange={(e) => handleInputChange(e, "month")} />
+              <styled.inputDigit style={{width: "100%"}} className="text-center month" type="number" placeholder="MM" name="expiry" value={card.month} onChange={(e) => handleInputChange(e, "month")} />
             </div>  
               /
             <div className="col mx-1">
-              <styled.inputDigit style={{width: "100%"}} className="text-center" type="number" placeholder="YY" name="expiry" onChange={(e) => handleInputChange(e, "year")} />
+              <styled.inputDigit style={{width: "100%"}} className="text-center year" type="number" placeholder="YY" name="expiry" value={card.year} onChange={(e) => handleInputChange(e, "year")} />
             </div>
           </div>
 
           { FormValid() ? <PaystackHook paymentDetails={card} /> : "" }
         </styled.Details>
 
-        <styled.untitledContainer>
-          <styled.Untitled>
-            <styled.header>Untitled</styled.header>
-            <styled.circleLogo>
-              <img src="./img/Group.png" alt="circlelogo" />
-            </styled.circleLogo>
+        <div className='row flex-column w-100'>
+          <styled.Untitled className="py-3">
+          <Cards
+            cvc={card.cvc}
+            expiry={card.expiry}
+            name={card.name}
+            number={card.number}
+          />
           </styled.Untitled>
 
-          <styled.untitledVat>
-            <styled.institution>Institution:</styled.institution>
-            <styled.uniqueId>Unidue ID:</styled.uniqueId>
-            <styled.Vat>VAT:</styled.Vat>
-            <styled.amountToPay>You are paying 0.00 USD</styled.amountToPay>
+          <styled.untitledVat style={{ zIndex: 2, marginTop: "-15px", paddingTop: "10px" }}>
+            <div className="row">
+              <div className="col-4 text-start">Institution: </div><div className="col-8 text-start">{infos.institution}</div>
+              <div className="col-4 text-start">Unique ID: </div><div className="col-8 text-start">{infos.uniqueId.replaceAll('"','')}</div>
+              <div className="col-4 text-start">VAT: </div><div className="col-8 text-start">{infos.vat}</div>
+            </div>
+            <styled.amountToPay className="mt-3">You are paying {card.amount + infos.vat} USD</styled.amountToPay>
           </styled.untitledVat>
-        </styled.untitledContainer>
+        </div>
       </styled.Cart>
     </>
   );

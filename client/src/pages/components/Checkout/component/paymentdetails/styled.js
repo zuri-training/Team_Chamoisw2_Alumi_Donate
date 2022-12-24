@@ -40,7 +40,7 @@ export const digit = styled.p`
 export const inputWrapper = styled.div`
   display: flex;
   background: #f7f7f7;
-  border: 1px solid #3a3a3a;
+  border: 1px solid #ced4da;
   border-radius: 10px;
   width: 100%;
   position: relative;
@@ -178,7 +178,7 @@ export const untitledContainer = styled.div`
 
 export const Untitled = styled.div`
   background-color: #d9d2e9;
-  height: 30%;
+  height: 35%;
   width: 60%;
   border-radius: 10px;
   display: flex;

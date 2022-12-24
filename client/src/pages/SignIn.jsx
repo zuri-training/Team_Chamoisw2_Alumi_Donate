@@ -11,7 +11,7 @@ const SignIn = () => {
     email: '',
     password: ''
   });
-
+  const [formSubmit, setFormSubmit] = useState(false)
   const { loginUser }  = useAuth()
   
   const handleChange = e => {
@@ -21,10 +21,11 @@ const SignIn = () => {
     });
   }
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    loginUser(formValues)
+    setFormSubmit(prev => (true))
+    await loginUser(formValues)
+    setFormSubmit(prev => (false))
   }
 
   return (
@@ -35,27 +36,33 @@ const SignIn = () => {
      <p>Input email and password to login into your account</p>
      </div>
      <div className="col-md-5 d-flex align-items-center justify-content-end">
-      <form onSubmit={handleSubmit} className="w-100">
-      <input
-        type="email"
-        className='form-control mb-3 w-100'
-        name="email"
-        placeholder="Email"
-        value={formValues.email}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        className='form-control mb-3 w-100'
-        name="password"
-        placeholder="Password"
-        value={formValues.confirmPassword}
-        onChange={handleChange}
-      />
-      <div className='row mb-5'><div className='col-12 d-flex justify-content-between'><span><input type={"checkbox"} /> Remember me</span> <span>Forgot Password?</span></div></div>
-      <button type='submit' className='login-button'>Login</button>
-      <div className='text-start mt-3'>Don't have an account? <Link to="/signup">Sign up</Link></div>
-      </form>
+      <div className='row'>
+        <div className='col-12'>
+          <form onSubmit={(e) => handleSubmit(e)} className="w-100">
+          <input
+            type="email"
+            className='form-control mb-3 w-100'
+            name="email"
+            placeholder="Email"
+            value={formValues.email}
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            className='form-control mb-3 w-100'
+            name="password"
+            placeholder="Password"
+            value={formValues.confirmPassword}
+            onChange={handleChange}
+          />
+          <div className='row mb-5'><div className='col-12 d-flex justify-content-between'><span><input type={"checkbox"} /> Remember me</span> <span>Forgot Password?</span></div></div>
+          <button type='submit' className='btn btn-lg login-button' disabled={formSubmit ? 'disabled':''}>Login</button>
+          </form>
+        </div>
+        <div className='col-12'>
+          <div className='text-start mt-3'>Don't have an account? <Link to="/signup">Sign up</Link></div>
+        </div>
+      </div>
       </div>
       <div className="col-md-5 d-flex align-items-end ">
       <img src={LoginImage} alt="secure-login" style={{width: "100%", height: "100vh"}} />

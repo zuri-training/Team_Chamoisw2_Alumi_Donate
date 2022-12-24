@@ -20,10 +20,11 @@ function SignUp() {
   const [colleges, setColleges] = useState([])
   const { signupUser } = useAuth();
   const { getColleges } = useColleges()
+  const [formProcessing, setFormProcessing] = useState(false)
 
   useLayoutEffect(() => {
     const yearsArr = []
-    for(let x=1000; x < 2200; x++){
+    for(let x=1900; x < 2200; x++){
       yearsArr.push(x)
     }
     setYears(yearsArr)
@@ -50,8 +51,9 @@ function SignUp() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    
-    signupUser(formValues)
+    setFormProcessing(prev => (true))
+    await signupUser(formValues)
+    setFormProcessing(prev => (false))
   }
 
   return (
@@ -130,7 +132,7 @@ function SignUp() {
           <input type="checkbox" className='mb-0' />&nbsp;&nbsp;<span> By registering, you are agreeing to our terms and conditions</span>
         </div>
       </div>
-      <button type='submit' className='btn btn-lg w-100 signup-button'>Signup</button>
+      <button type='submit' className='btn btn-lg w-100 signup-button' disabled={formProcessing? 'disabled':''}>Signup</button>
     </form>
     </div>
     </div>
