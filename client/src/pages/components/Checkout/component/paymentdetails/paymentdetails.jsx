@@ -26,15 +26,15 @@ function Card() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const auth = JSON.parse(localStorage.getItem('auth'))
+    const authUser = JSON.parse(localStorage.getItem('auth'))
    
-    if(auth === null){
+    if(authUser === null){
       navigate('/login')
       return
     } 
-    setInfos({...infos, institution: auth.college, uniqueId: auth.donationLink})
-    setCard({...card, email: auth.email, amount: parseInt(localStorage.getItem('amountToDonate'))})
-  })
+    setInfos({...infos, institution: authUser.college, uniqueId: authUser.donationLink})
+    setCard({...card, email: authUser.email, amount: parseInt(localStorage.getItem('amountToDonate'))})
+  },[card, infos, navigate])
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;

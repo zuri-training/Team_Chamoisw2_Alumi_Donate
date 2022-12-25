@@ -1,24 +1,17 @@
-.signin,.signup{
-    outline: none;
-    border-radius: 5px;
-    margin-bottom: 32px;
-}
-
 .signup{
     color: #071D57;
     background: #F5F5F5;
     outline: #F5F5F5;
-    width: auto;
-    margin-left: -80px;
 }
 
 .signin{
     background: #071D57;
     color: #F5F5F5;
     outline: #071D57;
-    width:inherit;
 }
 
-.nav-link-button{
-    width: 6rem;
+.signin,.signup{
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
 }
