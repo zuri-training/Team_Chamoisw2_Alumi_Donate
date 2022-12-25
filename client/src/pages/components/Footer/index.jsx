@@ -6,12 +6,12 @@ function Footer() {
   return (
     <styled.Footer>
       <styled.socialsContainer>
-        <img src="./img/Rectangle24.png" alt="Alumni Donate logo" />
+        <img src="/img/Rectangle24.png" alt="Alumni Donate logo" />
         
         <styled.aboutUsText1>we are a platform that helps alumni give</styled.aboutUsText1>
         <styled.aboutUsText2>back to their Alma-mater. You can reach us on this platform.</styled.aboutUsText2>
         <styled.Logos>
-        <img src="./img/Group 39.png" alt="Socials logo" />
+        <img src="/img/Group 39.png" alt="Socials logo" />
         </styled.Logos>
         <styled.emailWrapper>
         <styled.emailInput type="email" className="form-control mb-0" placeholder="Enter E-mail Address" />

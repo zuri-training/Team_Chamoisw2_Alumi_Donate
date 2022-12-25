@@ -141,11 +141,11 @@ function Card() {
               <styled.expiration className="text-start">Enter the expiration date</styled.expiration>
             </div>
             <div className="col mx-1">
-              <styled.inputDigit style={{width: "100%"}} className="text-center month" type="number" placeholder="MM" name="expiry" value={card.month} onChange={(e) => handleInputChange(e, "month")} />
+              <styled.numberInput style={{width: "100%"}} className="text-center month" type="number" placeholder="MM" name="expiry" value={card.month} onChange={(e) => handleInputChange(e, "month")} />
             </div>  
               /
             <div className="col mx-1">
-              <styled.inputDigit style={{width: "100%"}} className="text-center year" type="number" placeholder="YY" name="expiry" value={card.year} onChange={(e) => handleInputChange(e, "year")} />
+              <styled.numberInput style={{width: "100%"}} className="text-center year" type="number" placeholder="YY" name="expiry" value={card.year} onChange={(e) => handleInputChange(e, "year")} />
             </div>
           </div>
 

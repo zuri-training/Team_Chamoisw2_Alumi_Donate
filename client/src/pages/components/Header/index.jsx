@@ -15,7 +15,7 @@ function Header() {
   return (
     <styled.Header>
       <styled.imageContainer>
-        <img src="./img/Rectangle24.png" alt="Alumni Donate logo" />
+        <img src="/img/Rectangle24.png" alt="Alumni Donate logo" />
       </styled.imageContainer>
 
       <styled.Container>
