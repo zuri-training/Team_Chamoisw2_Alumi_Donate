@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { userIsAuth } from "../ProtectedRoutes";
 import './../../styles/navbar.scss'
@@ -6,9 +6,10 @@ import './../../styles/navbar.scss'
 function Header() {
   const navigate = useNavigate()
   const location = useLocation()  
+  const headerLinks = useMemo(() => (['donations', 'about-us', 'faq', 'contact-us']), [])
 
   useEffect(() => {
-    if(location.pathname === '/' || document.querySelector(`.${location.pathname.substring(1).trim()}`) === null)return
+    if( !headerLinks.includes(location.pathname.substring(1).trim()) )return
 
     if(document.querySelector('.nav-link.active')){
       //Remove the active class from the previously active nav-link
@@ -17,7 +18,7 @@ function Header() {
 
     //Add the active class to the presently active nav-link
     document.querySelector(`.${location.pathname.substring(1).trim()}`).classList.add('active')
-  }, [location.pathname])
+  }, [location.pathname, headerLinks])
 
   const logout = () => {
     localStorage.clear()

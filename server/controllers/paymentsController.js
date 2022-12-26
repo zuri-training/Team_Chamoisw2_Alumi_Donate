@@ -1,11 +1,12 @@
-const { handleAsync } = require("../utils/helpers");
+const { handleAsync } = require("../utils/helpers")
 const axios = require('axios')
 const Donation = require('./../models/donationsModel')
+const College = require('./../models/collegeModel')
 const jwt = require('jsonwebtoken')
 
 const verifyTransaction = handleAsync(async(req,res) => {
     // Get the reference from the url params
-    try{
+    
         const reference = req.params.reference
 
         const paystackResponse = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`,{
@@ -27,13 +28,13 @@ const verifyTransaction = handleAsync(async(req,res) => {
                 userId,
                 collegeId,
             }).save()
+
+            //Add the donation amount to the college's totalDonation amount
+            await College.findByIdAndUpdate(collegeId, { '$inc' : { totalDonations: Number(paystackResponse.data.data.amount) / 100 } }).exec()
+
         }
         
         res.status(paystackResponse.status).json({message: paystackResponse.data.message, status: paystackResponse.data.status})
-    }catch(err){
-        console.log(err)
-        res.status(err.status || 500).json({message: "An error occured", error: err})
-    }
 })
 
 module.exports = {
