@@ -45,21 +45,6 @@ function handleResponse(data = {}, message = "success") {
   };
 }
 
-// Sample controller function to show how to use the above functions
-const sampleHandler = handleAsync(async (req, res) => {
-  const { certificate } = req.body;
-
-  // Error occured
-  if (!certificate) throw createApiError("Certificate Not Found", 404);
-
-  // Update certificate ....
-
-  // Success
-  res
-    .status(200)
-    .json(handleResponse({ certificate }, "Successfully updated certificate"));
-});
-
 module.exports = {
   handleAsync,
   handleError,

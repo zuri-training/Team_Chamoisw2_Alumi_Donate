@@ -6,7 +6,6 @@ const UserToken = require("../models/userTokenModel")
 const ResetPassword = require('../models/resetPasswordModel')
 const { generateToken } = require("../utils/generateToken")
 const { sendChangePasswordEmail } = require("../utils/email")
-const { verifyRefreshToken } = require("../middlewares/verifyRefreshToken")
 const jwt = require('jsonwebtoken')
 const { handleAsync } = require('./../utils/helpers')
 
@@ -130,32 +129,6 @@ const userLogin = handleAsync( async (req, res, next) => {
         })
 })
 
-const userLogout = async (req, res) => {
-    /**
-       #swagger.tags = ['Authentication']
-       #swagger.description = 'Sign out the authenticated user'
-       #swagger.parameters['body'] = {
-        in: 'body',
-        type: 'object',
-        schema: {
-            $refreshToken: 'S70FIpFv3oe7rDpNSul3UjYZNAYTgU6uMmwarYeIMaLeI5BXGw'
-        }
-       }
-     */
-    try {
-        const userRefreshToken = await UserToken.findOne({ token: req.body.refreshToken })
-        if (!userRefreshToken)
-        return res
-            .status(200)
-            .json({ error: false, message: "Logged Out Sucessfully" })
-
-        await userRefreshToken.remove()
-        res.status(200).json({ error: false, message: "Logged Out Sucessfully" })
-    } catch (error) {
-        res.status(500).json({ error: true, message: "Internal Server Error" })
-    }
-}
-
 const forgotPassword = handleAsync(async (req, res) => {
     /**
         #swagger.tags = ['Authentication']
@@ -168,7 +141,6 @@ const forgotPassword = handleAsync(async (req, res) => {
             }
         }
      */
-    try{
         const { email } = req.body
         const userFound = await User.findOne({ email })
     
@@ -177,12 +149,12 @@ const forgotPassword = handleAsync(async (req, res) => {
         }
         const token = crypto.randomBytes(10).toString("hex")
 
-        const resetPass = await ResetPassword.findOneAndUpdate({ userId: userFound._id},{ userId: userFound._id, token },{upsert: true}).exec()
+        const resetPass = await ResetPassword.create({ userId: userFound._id, token })
     
         const link = `${process.env.BASE_URL}/changepassword/${token}`
     
         const emailSent = await sendChangePasswordEmail({ email, link })
-        
+       
         if(!emailSent) {
             await ResetPassword.findOneAndDelete({ userId: userFound._id, token }).exec()
             throw new Error('Operation failed. Please try again')
@@ -191,11 +163,6 @@ const forgotPassword = handleAsync(async (req, res) => {
         res
         .status(200)
         .json({ message: "Password reset link has been sent to your email account" })
-    }catch(err){
-        console.log(err)
-        return res.status(500).json({error: true, message: err.message})
-    }
-
 })
 
 const changePassword = handleAsync( async (req, res) => {
@@ -220,7 +187,6 @@ const changePassword = handleAsync( async (req, res) => {
           }
        }
      */
-    try {
       const { token }= req.params
 
       if (!token) {
@@ -245,51 +211,16 @@ const changePassword = handleAsync( async (req, res) => {
 
         // Update the password of the user
         await User.findByIdAndUpdate(user.userId, { password: hashedPass }).exec()
-
+        
         // Remove the reset password document associated with the token
         await ResetPassword.findOneAndDelete({ token }).exec()
 
         res.status(200).json({ message: "password changed" })
-      
-    } catch (error) {
-      return res.status(400).json({ message: "invalid Token" })
-    }
-})
-
-const refreshToken = handleAsync(async (req, res) => {
-    /**
-       #swagger.tags = ['Authentication']
-       #swagger.parameters['body'] = {
-          in: 'body',
-          type: 'object',
-          required: true,
-          schema: {
-            $refreshToken: 'MddEQ7teWmpfC561Vw/wetyNeJY4ErDKEAgZfbUxSG2oUfN8LjruiG'
-          }
-       }
-     */
-    verifyRefreshToken(req.body.refreshToken)
-      .then(({ tokenDetails }) => {
-        const payload = { userId: tokenDetails.userId }
-        const accessToken = jwt.sign(
-          payload,
-          process.env.JWT_SECRET,
-          { expiresIn: "5h" }
-        );
-        res.status(200).json({
-          error: false,
-          accessToken,
-          message: "Access token created successfully",
-        });
-      })
-      .catch((err) => res.status(400).json(err));
 })
 
 module.exports = {
     userSignup,
     userLogin,
-    userLogout,
     forgotPassword,
-    changePassword,
-    refreshToken
+    changePassword
 }
