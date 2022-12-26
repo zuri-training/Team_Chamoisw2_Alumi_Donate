@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import * as styled from "./styled";
 import PaystackHook from './../../../../../config/paystack.config';
 import Cards from 'react-credit-cards';
@@ -25,7 +25,7 @@ function Card() {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
+  const authCheck = useCallback(() => {
     const authUser = JSON.parse(localStorage.getItem('auth'))
    
     if(authUser === null){
@@ -34,7 +34,9 @@ function Card() {
     } 
     setInfos({...infos, institution: authUser.college, uniqueId: authUser.donationLink})
     setCard({...card, email: authUser.email, amount: parseInt(localStorage.getItem('amountToDonate'))})
-  },[card, infos, navigate])
+  }, [card, infos, navigate])
+
+  useMemo(() => (authCheck()) ,[])
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;
@@ -67,6 +69,8 @@ function Card() {
     if(name === 'amount'){
       //if it is not a number, return
       if(isNaN(Number(value))) return
+
+
     }
 
     //Validate month
@@ -131,7 +135,7 @@ function Card() {
               <NumericKeyboard isOpen={isOpen} onChange={(value, name) => {
                   handleInputChange({target:{ name:'cvc', value: value.value }})
               }} />
-              <input type="text" className="form-control" onClick={() => { setCard({...card, cvc: ''}); setIsOpen(true)}} contentEditable="false" value={card.cvc} />
+              <input type="text" className="form-control" onClick={() => { setCard({...card, cvc: ''}); setIsOpen(true)}} contentEditable="false" value={card.cvc} readOnly={true} />
             </div>
           </div>
 
@@ -168,7 +172,7 @@ function Card() {
               <div className="col-4 text-start">Unique ID: </div><div className="col-8 text-start">{infos.uniqueId.replaceAll('"','')}</div>
               <div className="col-4 text-start">VAT: </div><div className="col-8 text-start">{infos.vat}</div>
             </div>
-            <styled.amountToPay className="mt-3">You are paying {card.amount + infos.vat} USD</styled.amountToPay>
+            <styled.amountToPay className="mt-3">You are paying {Number(card.amount) + Number(infos.vat)} USD</styled.amountToPay>
           </styled.untitledVat>
         </div>
       </styled.Cart>
