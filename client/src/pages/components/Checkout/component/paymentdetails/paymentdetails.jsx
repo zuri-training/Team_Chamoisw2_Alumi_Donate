@@ -135,7 +135,7 @@ function Card() {
               <NumericKeyboard isOpen={isOpen} onChange={(value, name) => {
                   handleInputChange({target:{ name:'cvc', value: value.value }})
               }} />
-              <input type="text" className="form-control" onClick={() => { setCard({...card, cvc: ''}); setIsOpen(true)}} contentEditable="false" value={card.cvc} readOnly={true} />
+              <input type="password" className="form-control" onClick={() => { setCard({...card, cvc: ''}); setIsOpen(true)}} contentEditable="false" value={card.cvc} readOnly={true} />
             </div>
           </div>
 
