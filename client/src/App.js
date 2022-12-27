@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 
 import "./index.scss";
 import "./App.scss";
-import FAQPage from "./pages/components/FAQ/FAQ";
+import FAQPage from "./pages/FAQ";
 import CheckoutPage from "./pages/components/Checkout/Checkout";
 import SuccessPage from "./pages/components/SuccessPage/SuccessPage";
 import LandingPage from "./pages/LandingPage"
