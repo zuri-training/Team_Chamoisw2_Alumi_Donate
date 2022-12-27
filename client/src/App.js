@@ -13,6 +13,7 @@ import DashboardPage from "./pages/Dashboard";
 import DonationLinkPage from "./pages/DonationLink";
 import DonationsPage from "./pages/Donations";
 import AboutUsPage from "./pages/AboutUs";
+import ContactUsPage from "./pages/ContactUs";
 import ProtectedRoutes from "./pages/components/ProtectedRoutes";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
         <Route path="/donations" element={<DonationsPage />} />
+        <Route path="/contact-us" element={<ContactUsPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/donate/:donationLink" element={<DonationLinkPage />} />
         <Route 
