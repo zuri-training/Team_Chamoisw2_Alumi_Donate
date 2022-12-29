@@ -4,9 +4,8 @@
 }
 
 .faq-bg {
-  background-size: 100% 150%;
-  background-repeat: no-repeat;
-  background-position: center;
+  background-size: cover;
+  background-position: top -65px center;
 }
 
 .question-box h3, .question-box h4{
@@ -15,4 +14,9 @@
 
 .question-box p{
   font-size: 1.2vw;
+}
+
+.faq-page .bg-white{
+  width: 70vw;
+  height: 100%;
 }

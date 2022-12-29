@@ -1,6 +1,4 @@
 import React, { useLayoutEffect, useState } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
 import useDonations from './../hooks/donations';
 
 const Donations = () => {
@@ -15,7 +13,6 @@ const Donations = () => {
     
     return (
         <>
-        <Header />
         <main className='container h-auto'>
             {/* Tabular list of donations sorted by most recent from top to bottom*/}
             <table className="table table-dark table-striped">
@@ -46,7 +43,6 @@ const Donations = () => {
             </tbody>
             </table>
         </main>
-        <Footer />
         </>
     )
 }

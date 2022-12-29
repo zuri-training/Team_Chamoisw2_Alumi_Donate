@@ -29,7 +29,10 @@ const useAuth = () => {
                 icon: "success",
                 ...message
                 });
-                navigate("/login")
+                
+                //Login user once signup is complete
+                await loginUser({ email: formValues.email, password: formValues.password })
+                
                 return
             }else{
                 Toast.fire({

@@ -1,6 +1,4 @@
 import React from 'react'
-import Footer from './components/Footer'
-import Header from './components/Header'
 import { useNavigate } from 'react-router-dom'
 import AboutUsImage from './../assets/images/aboutUsImage.svg'
 import LearnMoreImage from './../assets/images/learnmore.svg'
@@ -13,7 +11,6 @@ const AboutUs = () => {
 
   return (
     <>
-      <Header />
       <main className='container'>
         <section className='row justify-content-center site-text-color'>
           <div className='col-9'>
@@ -62,7 +59,6 @@ const AboutUs = () => {
           <div className="col-md-3"><img src={FeaturesImage} className="w-100" alt="features" /><h2 className='text-start site-text-color'>Features...</h2></div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

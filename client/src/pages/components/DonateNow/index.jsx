@@ -1,29 +1,49 @@
 import DonateSchoolImage from './../../../assets/images/donateschoolimage.svg'
 import './../../styles/donatecomponent.scss'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 
 const DonateNow = () => {
     const [amountToDonate, setAmountToDonate] = useState(0);
+    const navigate = useNavigate()
 
     const deactivateLastSelectedAmount = () => {
         document.querySelector('.selected-amount').classList.remove('selected-amount')
     }
 
+    const activateNewSelectedAmount = (e) => {
+        e.target.classList.add('selected-amount')
+    }
+
+    const setEnterDonationInputValue = (amount) => {
+        document.querySelector('.enter-donation input').value = amount
+    }
+
     const handleDonationAmount = (e) => {
         deactivateLastSelectedAmount()
-        e.target.classList.add('selected-amount')
+
+        activateNewSelectedAmount(e)
+        
         setAmountToDonate(prev => {
             const selectedAmount = e.target.innerText.split('').slice(1).join('')
-            document.querySelector('.enter-donation input').value = selectedAmount
+
+            setEnterDonationInputValue(selectedAmount)
+            
             return selectedAmount
         })
         
     }
 
+    const redirectToCheckoutPage = () => {
+        const collegeDonationLink = JSON.parse(localStorage.getItem('auth')).donationLink
+        navigate(`/donate/${collegeDonationLink}/checkout`)
+    }
+
     const saveDAmountToLStorage = () => {
         localStorage.setItem('amountToDonate', amountToDonate)
+
+        redirectToCheckoutPage()
     }
 
     return (

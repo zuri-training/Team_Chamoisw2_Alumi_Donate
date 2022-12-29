@@ -1,19 +1,15 @@
 import React from "react"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
 import './styles/faq.scss'
 
 function FAQ() {
   return (
-    <>
-       <Header />
-       <main className="row w-100 px-5 py-5 site-text-color" style={{ height: "150%" }}>
+       <main className="faq-page col-12 w-100 px-5 site-text-color position-relative" style={{ height: "100%", overflowY: "visible" }}>
         <div className="faqs">
          <h1>FAQs</h1>
         </div>
-        <section className="faq-bg d-flex justify-content-center h-100" style={{ backgroundImage: "url('./../img/backgroundimage.png')" }}>         
-          <div className="position-absolute bg-white w-100 my-0" style={{ zIndex: 2, opacity: 0.4, height: "145%" }}></div>
-          <div className="question-box position-absolute w-75" style={{ zIndex: 3, padding: "2rem", height: "500px" }}>
+        <section className="faq-bg d-flex justify-content-center" style={{ backgroundImage: "url('./../img/backgroundimage.png')", height: "900px" }}>         
+          <div className="position-relative bg-white w-100 h-100 my-0" style={{ zIndex: 2, opacity: 0.4 }}></div>
+          <div className="question-box position-absolute w-75" style={{ zIndex: 3, padding: "2rem", height: "100" }}>
           <h4>Frequently asked questions about Alumni Donate</h4>
            
           <h3>How do I register my organization?</h3>
@@ -51,11 +47,6 @@ function FAQ() {
         </div>
         </section>
       </main>
-      <div className="row" style={{ position: 'relative', top: "20%"}}>
-      <Footer />
-      </div>
-    </>
-   
   )
 }
 
