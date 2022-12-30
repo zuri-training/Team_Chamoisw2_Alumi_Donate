@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 // Handle async is wrapper for your request handler,
 // it removes the need to use a try catch block and centralises error handling
 function handleAsync(callback) {
@@ -45,9 +46,20 @@ function handleResponse(data = {}, message = "success") {
   };
 }
 
+// Returns the values encoded in the jwt token if verification is successful
+// sample Usage verifyJwtToken(authorizationHeader)
+function verifyJwtToken(authorizationHeader = "") {
+  if(!authorizationHeader) throw new createApiError("User not authorized", 400)
+  
+  const token = authorizationHeader.split(' ')[1]
+
+  return jwt.verify(token, process.env.JWT_SECRET)
+}
+
 module.exports = {
   handleAsync,
   handleError,
   handleResponse,
-  createApiError
+  createApiError,
+  verifyJwtToken
 };

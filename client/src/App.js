@@ -20,6 +20,7 @@ import ProtectedRoutes, { userIsAuth } from "./pages/components/ProtectedRoutes"
 import Sidebar from "./pages/components/Sidebar"
 import Header from './pages/components/Header'
 import Footer from './pages/components/Footer'
+import ProfilePage from './pages/components/Dashboard/Profile'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(userIsAuth()))
@@ -36,9 +37,8 @@ function App() {
 
   return (
     <div className="App">
-
-      <div className="row">
-        <div className="top-navbar col-12 position-fixed top-0 bg-white site-text-color"><Header /></div>
+      <div className="top-navbar col-12 position-fixed top-0 bg-white site-text-color"><Header /></div>
+      <div className="row app-body p-0">
         {
           isAuthenticated && 
           <div className="col-md-3">
@@ -65,23 +65,30 @@ function App() {
             </ProtectedRoutes>
           } />
         <Route 
-          path="/dashboard"
+          path="dashboard"
           element={<DashboardPage setAuthenticated={setAuthenticated} />} 
           >
+             <Route 
+              path="profile" 
+              element={
+                <ProtectedRoutes>
+                  <ProfilePage />
+                </ProtectedRoutes>
+              } />
             <Route 
               path="donate" 
-              render={ () => {
+              element={
                 <ProtectedRoutes>
                   <DonateNow />
                 </ProtectedRoutes>
-              }} />
+              } />
             <Route 
               path="donate/success" 
-              render={ () => {
+              element={
                 <ProtectedRoutes>
                   <SuccessPage />
                 </ProtectedRoutes>
-              }} />
+              } />
           </Route>
       </Routes>
       </div>
