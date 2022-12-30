@@ -1,12 +1,12 @@
-const { check } = require("express-validator");
+const { body } = require("express-validator");
 
 const validateSignUp = [
-    check("email").trim().isEmail().toLowerCase(),
-    check("password").trim().not().isEmpty(),
-    check("phoneNumber").trim().not().isEmpty(),
-    check("gradYear").trim().not().isEmpty(),
-    check("collegeId").trim().not().isEmpty(),
-    check("fullName").trim().not().isEmpty()
+    body("email").trim().isEmail().toLowerCase(),
+    body("phoneNumber").trim().isMobilePhone(),
+    body("gradYear").trim().isNumeric().isLength(4),
+    body("collegeId").trim().isMongoId(),
+    body("fullName").trim().isString().isLength({min: 5}),
+    body("password").trim().isAlphanumeric().isLength({min: 5}),
 ]
 
 module.exports = validateSignUp;

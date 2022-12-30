@@ -17,19 +17,16 @@ const useAuth = () => {
     }
 
     const signupUser = async (formValues) => {
-        //if(!formValid(formValues)) return
+        //if(!signupFormValid(formValues)) return
 
         try{
             const response = await axios.post("/auth/signup", formValues);
-            const message = {title: "Registration successful"};
-
+           
             // This implies the signup was successful
             if(response.status === 201){
-                Toast.fire({
-                icon: "success",
-                ...message
-                });
-                navigate("/login")
+                //Login user once signup is complete
+                await loginUser({ email: formValues.email, password: formValues.password })
+                
                 return
             }else{
                 Toast.fire({
@@ -57,7 +54,8 @@ const useAuth = () => {
                     icon: "success",
                     ...message
                 });
-
+                
+                localStorage.clear()
                 localStorage.setItem('auth', JSON.stringify(response.data))
                 localStorage.setItem('donationLink', response.data.donationLink)
 

@@ -1,10 +1,9 @@
-import React,{ useState } from 'react';
+import React,{ useState, useLayoutEffect } from 'react';
 import useAuth from './../hooks/auth'
 import LoginImage from './../assets/images/Secure-login.svg'
 import './styles/signin.scss'
-import Header from './../pages/components/Header'
-import Footer from './../pages/components/Footer'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { userIsAuth } from './components/ProtectedRoutes'
 
 const SignIn = () => {
   const [formValues, setFormValues] = useState({
@@ -13,7 +12,14 @@ const SignIn = () => {
   });
   const [formSubmit, setFormSubmit] = useState(false)
   const { loginUser }  = useAuth()
+  const navigate = useNavigate() 
   
+  useLayoutEffect(() => {
+    if(Boolean(userIsAuth())){
+      navigate('/dashboard')
+    }
+  },[navigate])
+
   const handleChange = e => {
     setFormValues({
       ...formValues,
@@ -30,7 +36,6 @@ const SignIn = () => {
 
   return (
     <div className="sign-in row justify-content-center text-left">
-     <Header />
      <div className='col-md-10 d-flex flex-column justify-content-start align-items-start mt-1'>
      <h4>Welcome</h4>
      <p>Input email and password to login into your account</p>
@@ -38,7 +43,7 @@ const SignIn = () => {
      <div className="col-md-5 d-flex align-items-center justify-content-end">
       <div className='row'>
         <div className='col-12'>
-          <form onSubmit={(e) => handleSubmit(e)} className="w-100">
+          <form onSubmit={(e) => handleSubmit(e)} className="w-100" autoComplete="off">
           <input
             type="email"
             className='form-control mb-3 w-100'
@@ -46,6 +51,7 @@ const SignIn = () => {
             placeholder="Email"
             value={formValues.email}
             onChange={handleChange}
+            autoComplete="off"
           />
           <input
             type="password"
@@ -54,6 +60,7 @@ const SignIn = () => {
             placeholder="Password"
             value={formValues.confirmPassword}
             onChange={handleChange}
+            autoComplete="off"
           />
           <div className='row mb-5'><div className='col-12 d-flex justify-content-between'><span><input type={"checkbox"} /> Remember me</span> <span>Forgot Password?</span></div></div>
           <button type='submit' className='btn btn-lg login-button' disabled={formSubmit ? 'disabled':''}>Login</button>
@@ -67,8 +74,6 @@ const SignIn = () => {
       <div className="col-md-5 d-flex align-items-end ">
       <img src={LoginImage} alt="secure-login" style={{width: "100%", height: "100vh"}} />
       </div>
-
-      <Footer />
     </div>
     
   )

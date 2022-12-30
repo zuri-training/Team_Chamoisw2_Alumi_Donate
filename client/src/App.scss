@@ -1,7 +1,7 @@
-.App {
+.App, .app-body {
   text-align: center;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
 }
 
 .site-text-color{
@@ -10,4 +10,8 @@
 
 .site-bg-color{
   background-color: #071D57 !important;
+}
+
+.page-content{
+  margin-top: 20vh !important;
 }

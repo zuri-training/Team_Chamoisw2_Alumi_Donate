@@ -3,8 +3,6 @@ import useColleges from '../hooks/colleges';
 import useAuth from './../hooks/auth';
 import SignupImage from './../assets/images/signup-image.svg';
 import './styles/signup.scss'
-import Header from './components/Header';
-import Footer from './components/Footer';
 
 function SignUp() {
   const [formValues, setFormValues] = useState({
@@ -58,7 +56,6 @@ function SignUp() {
 
   return (
     <section className='signup-page'>
-    <Header />
     <div className='row justify-content-center'>
       <div className="col-md-5 d-flex justify-content-end">
         <img src={SignupImage} alt="signup" style={{width: "100%", height: "100vh"}} />
@@ -136,7 +133,6 @@ function SignUp() {
     </form>
     </div>
     </div>
-    <Footer />
     </section>
   )
 }

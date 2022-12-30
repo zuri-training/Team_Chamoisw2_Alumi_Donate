@@ -1,14 +1,8 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 
-const userAuth = () => {
-  const userDetails = localStorage.getItem("auth")
-  
-  return userDetails;
-};
-
 const ProtectedRoutes = ({children}) => {
-  const isAuth = userAuth();
+  const isAuth = userIsAuth();
 
   return isAuth ? children : <Navigate to="/login" />;
 };

@@ -1,6 +1,4 @@
 import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import heroBlue from './../assets/images/heroBlue.svg';
 import heroDonate from './../assets/images/heroDonate.svg'
 import heroDonateBg from './../assets/images/heroDonateBg.svg'
@@ -13,7 +11,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 const LandingPage = () => {
   return <>
-    <Header />
       <main className='w-100 mb-5'>
         {/* Hero */}
        <section className='row'>
@@ -83,7 +80,6 @@ const LandingPage = () => {
           </div>
         </section>
       </main>  
-      <Footer />
   </>;
 };
 

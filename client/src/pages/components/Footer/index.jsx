@@ -4,7 +4,7 @@ import * as styled from "./styled";
 
 function Footer() {
   return (
-    <styled.Footer style={{ position:'relative', bottom: "0px", width: "100%" }}>
+    <styled.Footer style={{ position:'relative', bottom: "0px", width: "100%", padding: "0px" }}>
       <styled.socialsContainer>
         <img src="/img/Rectangle24.png" alt="Alumni Donate logo" />
         
