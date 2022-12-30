@@ -9,8 +9,8 @@ const Dashboard = ({ setAuthenticated }) => {
   },[setAuthenticated])
 
   return (
-    <div className="dashboard row justify-content-center text-left">
-      <div className="col-md-9"><Outlet /></div>
+    <div className="dashboard row justify-content-center">
+      <div className="col-md-12"><Outlet /></div>
     </div>
   )
 };
