@@ -3,19 +3,16 @@ import useAuth from './../hooks/auth'
 import LoginImage from './../assets/images/Secure-login.svg'
 import './styles/signin.scss'
 import { Link, useNavigate } from 'react-router-dom'
-import { userIsAuth } from './components/ProtectedRoutes'
+
 
 const SignIn = () => {
-  const [formValues, setFormValues] = useState({
-    email: '',
-    password: ''
-  });
+  const [formValues, setFormValues] = useState({ email: '', password: ''});
   const [formSubmit, setFormSubmit] = useState(false)
-  const { loginUser }  = useAuth()
+  const { loginUser, userIsAuth }  = useAuth()
   const navigate = useNavigate() 
-  
+
   useLayoutEffect(() => {
-    if(Boolean(userIsAuth())){
+    if(userIsAuth()){
       navigate('/dashboard')
     }
   },[navigate])

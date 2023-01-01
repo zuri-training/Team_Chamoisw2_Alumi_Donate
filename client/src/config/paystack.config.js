@@ -1,8 +1,9 @@
 import React from 'react';
 import { usePaystackPayment } from 'react-paystack';
-import axios from '../api/axios';
+import useAxios from '../api/axios';
 import { Toast } from '../pages/components/ToastAlert';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'
 
 const config = {
     reference: (new Date()).getTime().toString(),
@@ -15,6 +16,9 @@ const config = {
 
 const PaystackHook = ({paymentDetails}) => {
     const navigate = useNavigate()
+    const { axiosPrivate } = useAxios()
+    const donationsInfo = useSelector(state => (state.donations))
+
     config.amount = paymentDetails.amount * 100;
     config.email = paymentDetails.email;
 
@@ -31,26 +35,9 @@ const PaystackHook = ({paymentDetails}) => {
       }
 
       // verify transaction
-      (async () => {
-        const token = JSON.parse(localStorage.getItem('auth')).token
-        
-        if(!token) {
-          Toast.fire({
-            icon: "error",
-            title: "Unauthorized access"
-          })
-
-          navigate('/login')
-
-          return
-        }
-
+      (async () => {        
         try{
-          const verificationResponse = await axios.get(`/transaction/verify/${response.reference}`,{
-            headers:{
-              'accesstoken': `Bearer ${token}`
-            }
-          })
+          const verificationResponse = await axiosPrivate.post(`/transaction/verify/${response.reference}`, donationsInfo)
           
 
           if(verificationResponse.status !== 200){

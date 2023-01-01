@@ -1,13 +1,18 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { LOGOUT } from '../../../redux/actions'
+import { useDispatch } from 'react-redux'
 
-const Sidebar = ({ loggedOut }) => {
+const Sidebar = () => {
     const dashboardPages = useMemo(() => (['profile', 'donate']),[])
     const location = useLocation()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const logout = () => {
-        localStorage.clear()
-        loggedOut()
+        dispatch({type: LOGOUT})
+
+        navigate('/')
     }
 
     const removeActiveLink = () => {

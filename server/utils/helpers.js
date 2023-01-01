@@ -9,7 +9,7 @@ function handleAsync(callback) {
       await callback(req, res, next);
     } catch (error) {
       // Respond with statusCode if defined else 500
-      res.status(error.statusCode || 500).json(handleError(error.message));
+      res.status(200).json(handleResponse({message: error.message, statusCode: error.statusCode || 500, error: true}, error.message));
     }
   };
 }

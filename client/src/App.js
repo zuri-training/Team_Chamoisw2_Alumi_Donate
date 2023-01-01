@@ -1,5 +1,6 @@
-import React, { useState } from "react"
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import React, { useLayoutEffect, useState } from "react"
+import { Routes, Route } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import "./index.scss"
 import "./App.scss"
@@ -16,38 +17,33 @@ import DonationsPage from "./pages/Donations"
 import AboutUsPage from "./pages/AboutUs"
 import ContactUsPage from "./pages/ContactUs"
 import DonateNow from "./pages/components/DonateNow"
-import ProtectedRoutes, { userIsAuth } from "./pages/components/ProtectedRoutes"
+import ProtectedRoutes from "./pages/components/ProtectedRoutes"
 import Sidebar from "./pages/components/Sidebar"
 import Header from './pages/components/Header'
 import Footer from './pages/components/Footer'
 import ProfilePage from './pages/components/Dashboard/Profile'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(userIsAuth()))
-  const navigate = useNavigate()
+  const authUser = useSelector(state => (state.auth.user)) 
+  const [isAuthenticated, setIsAuthenticated] = useState(authUser)
 
-  const loggedOut = () => {
-    setIsAuthenticated(false)
-    navigate('/login')
-  }
-
-  const setAuthenticated = (authState) => {
-    setIsAuthenticated(authState)
-  }
+  useLayoutEffect(() => {
+    setIsAuthenticated(authUser)
+  },[authUser])
 
   return (
     <div className="App">
       <div className="top-navbar col-12 position-fixed top-0 bg-white site-text-color"><Header /></div>
       <div className="row app-body p-0">
         {
-          isAuthenticated && 
+          isAuthenticated.donationLink && 
           <div className="col-md-3">
             <nav className="sidebar sidebar-offcanvas position-sticky" id="sidebar">
-              <Sidebar loggedOut={loggedOut} />
+              <Sidebar />
             </nav>
           </div>
         }
-      <div className={ isAuthenticated ? "col-md-9 page-content": "col-md-12 page-content"}>
+      <div className={ isAuthenticated.donationLink ? "col-md-9 page-content": "col-md-12 page-content"}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninPage />} />
@@ -58,15 +54,8 @@ function App() {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/donate/:donationLink" element={<DonationLinkPage />} />
         <Route 
-          path="/donate/checkout" 
-          element={
-            <ProtectedRoutes>
-              <CheckoutPage />
-            </ProtectedRoutes>
-          } />
-        <Route 
           path="dashboard"
-          element={<DashboardPage setAuthenticated={setAuthenticated} />} 
+          element={<DashboardPage />} 
           >
              <Route 
               path="profile" 
@@ -83,6 +72,13 @@ function App() {
                 </ProtectedRoutes>
               } />
             <Route 
+              path="donate/checkout" 
+              element={
+                <ProtectedRoutes>
+                  <CheckoutPage />
+                </ProtectedRoutes>
+              } />
+            <Route 
               path="donate/success" 
               element={
                 <ProtectedRoutes>
@@ -92,7 +88,7 @@ function App() {
           </Route>
       </Routes>
       </div>
-      <div className="col-12 footer"><Footer /></div>
+      <div className="col-12 footer p-0 mt-5"><Footer /></div>
       </div>
     </div>
   )

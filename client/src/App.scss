@@ -1,11 +1,24 @@
 .App, .app-body {
   text-align: center;
-  height: 100vh;
+  height: auto;
   width: 100vw;
+  min-height: 100vh;
 }
 
 .site-text-color{
   color: #071D57
+}
+
+.site-text-grey{
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.site-bg-grey{
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.fs-7{
+  font-size: 0.7rem !important;
 }
 
 .site-bg-color{

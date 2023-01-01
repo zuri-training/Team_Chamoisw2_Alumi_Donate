@@ -1,28 +1,27 @@
 import axios from "axios";
+import { useSelector } from 'react-redux'
 
-const baseURL = process.env.REACT_APP_SERVER_URL;
+const useAxios = () => {
+  const baseURL = process.env.REACT_APP_SERVER_URL
+  const { user } = useSelector(state => (state.auth))
+  
+  const axiosPublic = axios.create({
+    baseURL
+  });
 
-export default axios.create({
-  baseURL
-});
+  const axiosPrivate = axios.create({
+    baseURL,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${user.token}`
+    }
+  });
 
-const axiosPrivate = () => {
-  const auth = localStorage.getItem("auth") || "";
-
-  let token = ""
-
-  if(auth){
-    token  = JSON.parse(auth).token
-    
-    return axios.create({
-      baseURL,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    });
+  return {
+    axiosPublic,
+    axiosPrivate
   }
   
 }
 
-export { axiosPrivate };
+export default useAxios;

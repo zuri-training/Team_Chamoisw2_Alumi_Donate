@@ -1,7 +1,10 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import useColleges from '../hooks/colleges';
 import useAuth from './../hooks/auth';
+import useDonations from './../hooks/donations'
 import SignupImage from './../assets/images/signup-image.svg';
+import { RESET_DONATION_LINK } from './../redux/actions'
 import './styles/signup.scss'
 
 function SignUp() {
@@ -14,10 +17,12 @@ function SignUp() {
     password: '',
     confirmPassword: ''
   });
-  const [years, setYears] = useState([]);
+  const [years, setYears] = useState([])
   const [colleges, setColleges] = useState([])
-  const { signupUser } = useAuth();
-  const { getColleges } = useColleges()
+  const { signupUser, getUserData } = useAuth()
+  const { getColleges, getCollege } = useColleges()
+  const { getDonationReduxData } = useDonations()
+  const dispatch = useDispatch()
   const [formProcessing, setFormProcessing] = useState(false)
 
   useLayoutEffect(() => {
@@ -29,16 +34,38 @@ function SignUp() {
   }, [])
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await getColleges()
-        setColleges(response.data.message)
-      } catch (error) {
-        console.log(error)
-      }
-     
-    })()
-  },[getColleges])
+    
+    // Check if the signup page is being accessed via a donation link
+    if(getDonationReduxData().donationLink !== ''){
+      (async () => {
+        try {
+          const response = await getCollege( getDonationReduxData().donationLink )
+          const collegeFound = response.data.data.message
+          
+          if(collegeFound.length === 1){
+            setColleges(collegeFound)
+            setFormValues({ ...formValues, collegeId: collegeFound[0]._id })  
+            //Remove the donationLink from redux store
+            dispatch({ type: RESET_DONATION_LINK })
+
+          }else{
+            console.log(response.data)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      })()  
+    }else{
+      (async () => {
+        try {
+          const response = await getColleges()
+          setColleges(response.data.message)
+        } catch (error) {
+          console.log(error)
+        }
+      })()
+    }
+  },[])
 
   const handleChange = e => {
     setFormValues({
@@ -55,6 +82,7 @@ function SignUp() {
   }
 
   return (
+    colleges.length > 0 &&
     <section className='signup-page'>
     <div className='row justify-content-center'>
       <div className="col-md-5 d-flex justify-content-end">
@@ -107,11 +135,20 @@ function SignUp() {
         name='collegeId'
         value={formValues.collegeId}
         onChange={handleChange} 
-        className="form-control">
-        <option>Choose your Alma Mater</option>
-          {
-            colleges.length > 0 && colleges.map(college => (<option value={college._id} key={college._id}>{college.name} ({college.location})</option>))
-          }
+        className="form-control"
+        disabled={ colleges.length === 1 ? 'disabled': '' }>
+        {/* 
+          This college option is loaded if the signup page is accessed via a donation link
+          (i.e The college donation link is same as the donation link used to access the website) 
+        */}
+        {
+          colleges.length === 1 
+          && <option value={colleges[0]._id} key={colleges[0]._id}>{colleges[0].name} ({colleges[0].location})</option>
+        }
+        { colleges.length > 1  && <option>Choose your Alma Mater</option> }
+        {
+          colleges.length > 1 && colleges.map(college => (<option value={college._id} key={college._id}>{college.name} ({college.location})</option>))
+        }
       </select>
       <select 
         name='gradYear'

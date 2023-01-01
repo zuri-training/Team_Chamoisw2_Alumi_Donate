@@ -2,11 +2,15 @@ import DonateSchoolImage from './../../../assets/images/donateschoolimage.svg'
 import './../../styles/donatecomponent.scss'
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux'
+import { SET_DONATION_AMOUNT } from './../../../redux/actions'
 
 
 const DonateNow = () => {
-    const [amountToDonate, setAmountToDonate] = useState(0);
+    const [amountToDonate, setAmountToDonate] = useState(0)
+    const [anonymousAlumni, setAnonymousAlumni] = useState(false)
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const deactivateLastSelectedAmount = () => {
         document.querySelector('.selected-amount').classList.remove('selected-amount')
@@ -25,25 +29,31 @@ const DonateNow = () => {
 
         activateNewSelectedAmount(e)
         
-        setAmountToDonate(prev => {
-            const selectedAmount = e.target.innerText.split('').slice(1).join('')
+        const selectedAmount = e.target.innerText.split('').slice(1).join('')
 
-            setEnterDonationInputValue(selectedAmount)
-            
-            return selectedAmount
-        })
+        setEnterDonationInputValue(selectedAmount)
         
+        setAmountToDonate(selectedAmount)   
     }
 
-    const redirectToCheckoutPage = () => {
-        const collegeDonationLink = JSON.parse(localStorage.getItem('auth')).donationLink
-        navigate(`/donate/${collegeDonationLink}/checkout`)
+    const navigateToCheckoutPage = () => {
+        navigate(`/dashboard/donate/checkout`)
     }
 
-    const saveDAmountToLStorage = () => {
-        localStorage.setItem('amountToDonate', amountToDonate)
+    const saveDonationAmount = () => {
+        dispatch({
+            type: SET_DONATION_AMOUNT,
+            payload: {
+                amountToDonate,
+                anonymousAlumni
+            }
+        })
 
-        redirectToCheckoutPage()
+        navigateToCheckoutPage()
+    }
+
+    const handleSetAnonymous = (e) => {
+        setAnonymousAlumni(e.target.checked)
     }
 
     return (
@@ -104,7 +114,7 @@ const DonateNow = () => {
                 {/* Subscription options */}
                 <div className="row mt-5">
                     <div className="col-12 d-flex justify-content-start">
-                        <input type="checkbox"/> &nbsp;Don’t display my name publicly on the fundraiser.
+                        <input type="checkbox" onChange={e => handleSetAnonymous(e)}/> &nbsp;Don’t display my name publicly on the fundraiser.
                     </div>
                     <div className="col-12 d-flex justify-content-start">
                         <input type="checkbox"/> &nbsp;Get occassional updates on the activities of your institution. You may unsubscribe at any time.
@@ -121,9 +131,7 @@ const DonateNow = () => {
 
                 {/* Proceed Button */}
                 <div className='row justify-content-center mt-3'>
-                    <Link to={`/donate/checkout`}>
-                        <button onClick={saveDAmountToLStorage} className='btn btn-lg border-top-left-radius border-bottom-right-radius site-bg-color text-white w-75 proceed-button'>Proceed</button>
-                    </Link>
+                    <button onClick={saveDonationAmount} className='btn btn-lg border-top-left-radius border-bottom-right-radius site-bg-color text-white w-75 proceed-button'>Proceed</button>
                 </div>
 
                 {/* Terms and Privacy */}

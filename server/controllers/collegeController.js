@@ -1,7 +1,7 @@
 const collegesJSON = require("./../colleges.json");
 const pureUUID = require('pure-uuid');
 const College = require('./../models/collegeModel');
-const { handleAsync, createApiError } = require('./../utils/helpers');
+const { handleAsync, createApiError, handleResponse } = require('./../utils/helpers');
 
 const populateColleges = handleAsync(async(req, res) => {
     collegesJSON.forEach(async (val) => {
@@ -19,7 +19,6 @@ const populateColleges = handleAsync(async(req, res) => {
                 donationLink: JSON.stringify(await new pureUUID(4))
             }).save()            
         })
-        
     })
     
     res.status(201).json({message: "seeded"})
@@ -30,13 +29,14 @@ const getAllColleges = handleAsync(async (req,res) => {
     res.status(200).json({ message: colleges })
 })
 
-const getDonationLink = handleAsync(async (req, res) => {
-    const collegeId = req.params.collegeId
-    const collegeFound = await College.findById(collegeId).exec()
-    res.status(200).json({ message: collegeFound.donationLink })
+const getCollege = handleAsync(async (req, res) => {
+    const donationLink = req.params.donationLink
+    const collegeFound = await College.findOne({ donationLink }, {name: true, location: true}).exec()
+    res.status(200).json(handleResponse({ message: [ collegeFound ] }))
 })
+
 module.exports = { 
     populateColleges,
     getAllColleges,
-    getDonationLink
+    getCollege
 }

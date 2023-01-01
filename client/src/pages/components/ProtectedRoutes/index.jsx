@@ -1,16 +1,12 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const ProtectedRoutes = ({children}) => {
-  const isAuth = userIsAuth();
+  const auth = useSelector(state => (state.auth))
+  const [authUser] = useState(auth.user)
 
-  return isAuth ? children : <Navigate to="/login" />;
-};
-
-export const userIsAuth = () => {
-  const userIsAuthDetails = localStorage.getItem("auth")
-  
-  return userIsAuthDetails;
+  return Object.keys(authUser) ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoutes

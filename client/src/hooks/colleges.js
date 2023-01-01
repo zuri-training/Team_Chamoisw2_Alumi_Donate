@@ -1,13 +1,34 @@
-import axios from './../api/axios'
+import useAxios from './../api/axios'
+import { Toast } from '../pages/components/ToastAlert'
 
 const useColleges =  () => {
+    const { axiosPublic } = useAxios()
 
     const getColleges = () => {
-        return axios.get("/colleges/all");
+        try{
+            return axiosPublic.get("/colleges/all");
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: err.response? err.response.data.message : err.message
+            });
+        }
+    }
+
+    const getCollege = (collegeDonationLink) => {
+        try{
+            return axiosPublic.get(`/colleges/single/${collegeDonationLink}`);
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: err.response? err.response.data.message : err.message
+            });
+        }
     }
 
     return {
-        getColleges
+        getColleges,
+        getCollege
     }
 }
 

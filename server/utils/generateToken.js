@@ -8,7 +8,6 @@ const generateToken = async (user) => {
             process.env.JWT_SECRET,
             { expiresIn: "5h" }
         );
-       
         return Promise.resolve({ accessToken })
     } catch (err) {
         return Promise.reject(err)
