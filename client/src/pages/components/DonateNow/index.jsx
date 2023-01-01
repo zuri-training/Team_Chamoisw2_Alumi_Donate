@@ -101,7 +101,7 @@ const DonateNow = () => {
                     <h5 className='text-start'>Enter Donation</h5>
                     <div className='row bg-white enter-amount align-items-center rounded fs-2'>
                         <div className="col-1">$</div>
-                        <div className="col-11"><input type="number" className="w-100 border border-0 outline-0" placeholder='0.00' style={{textAlign: 'right'}} onChange={(e) => setAmountToDonate(e.target.value)} /></div>
+                        <div className="col-11"><input type="number" className="w-100 border border-0 outline-0" placeholder='0.00' style={{textAlign: 'right'}} value={amountToDonate} onChange={(e) => setAmountToDonate(e.target.value)} /></div>
                     </div>
                 </div>
 

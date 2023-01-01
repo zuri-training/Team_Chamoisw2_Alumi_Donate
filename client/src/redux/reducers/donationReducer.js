@@ -9,6 +9,7 @@ const initialState = {
 const donationsReducer = (state= initialState, action) => {
     switch(action.type){
         case SET_DONATION_AMOUNT:
+            return { ...state, ...action.payload }
         case SET_DONATION_LINK:
             return { ...state, donationLink: action.payload }
         case LOGOUT:

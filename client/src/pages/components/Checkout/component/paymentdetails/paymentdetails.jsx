@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PaystackHook from '../../../../../config/paystack.config';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import { NumericKeyboard } from 'react-numeric-keyboard';
+import { useSelector } from 'react-redux'
 
 function Card() {
   const [card, setCard] = useState({
@@ -19,7 +20,12 @@ function Card() {
     uniqueId: ''
   })
   const [isOpen, setIsOpen] = useState(false);
+  const donationReduxData = useSelector(state => (state.donations))
+  const [donationData, setDonationData] = useState(donationReduxData)
   
+  useEffect(() => {
+    setCard({ ...card, amount: donationData.amountToDonate })
+  },[])
 
   const handleInputChange = (e, inputField) => {
     const { name, value } = e.target;
@@ -87,7 +93,7 @@ function Card() {
 
       {/* Amount to donate */}
       <div className="mb-4 w-75 d-flex flex-column align-items-start">
-        <h5 for="card-email" className="form-label text-start fs-5 site-text-color">Amount to donate</h5>
+        <h5 for="card-email" className="form-label text-start fs-5 site-text-color">Enter amount</h5>
         <input type="text" name="amount" value={card.amount} onChange={handleInputChange} className="form-control" id="card-amount" aria-describedby="basic-addon3" />
       </div>
 
