@@ -6,7 +6,7 @@ const ResetPassword = require('../models/resetPasswordModel')
 const { generateToken } = require("../utils/generateToken")
 const { sendChangePasswordEmail } = require("../utils/email")
 const jwt = require('jsonwebtoken')
-const { handleAsync, handleResponse, createApiError } = require('./../utils/helpers')
+const { handleAsync, handleResponse, createApiError, verifyJwtToken } = require('./../utils/helpers')
 
 
 //function to check if user already exists
@@ -210,9 +210,18 @@ const changePassword = handleAsync( async (req, res) => {
         res.status(200).json({ message: "password changed" })
 })
 
+const verifyJwt = handleAsync(async (req, res) => {
+    const { authorization } = req.headers
+
+    const verificationResponse = verifyJwtToken(authorization)
+
+    res.status(200).json(handleResponse({message: verificationResponse}))
+})
+
 module.exports = {
     userSignup,
     userLogin,
     forgotPassword,
-    changePassword
+    changePassword,
+    verifyJwt
 }

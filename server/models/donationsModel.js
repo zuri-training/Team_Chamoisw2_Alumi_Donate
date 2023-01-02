@@ -19,6 +19,10 @@ const donationsSchema = new Schema({
   paymentReference: {
     type: Number,
     required: true
+  },
+  isAnonymous: {
+    type: Boolean,
+    default: false
   }
 },{
   timestamps: true

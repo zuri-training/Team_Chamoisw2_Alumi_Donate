@@ -88,8 +88,7 @@ const useAuth = () => {
                     payload: response.data.data
                 })
 
-                // This donation link is being retrieved when an authenticated user tries to copy the
-                // donation link from their profile page
+                // This donation link is being set by an authenticated user
                 dispatch({ type: SET_DONATION_LINK, payload: response.data.data.donationLink})
 
                 navigate("/dashboard")
