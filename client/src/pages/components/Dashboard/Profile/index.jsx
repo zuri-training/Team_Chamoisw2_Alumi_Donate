@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useLayoutEffect, useMemo } from 'react'
 import useUserProfile from './../../../../hooks/profile'
-import useColleges from '../../../../hooks/colleges'
-import { PencilSquare, XCircle, HddFill, PersonBoundingBox } from 'react-bootstrap-icons'
-import { Toast } from '../../ToastAlert'
+import useColleges from './../../../../hooks/colleges'
+import useAuth from '../../../../hooks/auth'
+import { PencilSquare, XCircle, HddFill, PersonBoundingBox, Link as LinkIcon } from 'react-bootstrap-icons'
 import './../../../styles/profile.scss'
+import { Toast } from '../../ToastAlert'
+import { SET_DONATION_LINK } from '../../../../redux/actions'
+import { useDispatch } from 'react-redux'
+import useDonations from '../../../../hooks/donations'
 
 const Profile = () => {
     const { getUserData, updateUserData } = useUserProfile()
@@ -13,6 +17,8 @@ const Profile = () => {
     const [colleges, setColleges] = useState([])
     const [formProcessing, setFormProcessing] = useState(false)
     const { getColleges } = useColleges()
+    const { getDonationReduxData } = useDonations()
+    const dispatch = useDispatch()
 
     useMemo(() => {
         (async () => {
@@ -35,6 +41,7 @@ const Profile = () => {
         setYears(yearsArr)
       }, [])
     
+    // Fetches the list of all college institutions
     useEffect(() => {
         (async () => {
             try {
@@ -58,9 +65,8 @@ const Profile = () => {
         e.preventDefault();
         setFormProcessing(prev => (true))
         let updatedValues = null
-
         updatedValues = await updateUserData(formValues)
-        
+
         if(updatedValues){
             setOldFormValues({...updatedValues.data, password: ''})
             setFormValues({...updatedValues.data, password: ''})
@@ -70,6 +76,9 @@ const Profile = () => {
             Object.keys(formValues).forEach(formKey => {
                 hideInputBox(formKey)
             })
+
+            // Updates the donation link
+            dispatch({ type: SET_DONATION_LINK, payload: updatedValues.data.collegeId.donationLink })
         }else {
             setFormProcessing(prev => (false))
 
@@ -97,10 +106,23 @@ const Profile = () => {
         resetFormValue(inputTitle)
     }
 
+    const copyDonationLink = () => {
+        const { donationLink } = getDonationReduxData()
+        
+        navigator.clipboard.writeText(`${process.env.REACT_APP_CLIENT_URL}/donate/${donationLink}`);
+
+        Toast.fire({
+            icon: "success",
+            title: "Donation link copied"
+        })
+    }
+
     return (
-        Boolean(formValues) && Boolean(oldFormValues) && <div className='row mb-5 justify-content-center align-items-around' >
+        Boolean(formValues) 
+        && Boolean(oldFormValues) 
+        && <div className='row mb-5 justify-content-around'>
             <h2 className='text-start'><PersonBoundingBox className="fs-2 site-text-color" /> My Profile</h2>
-            <form onSubmit={handleSubmit} className="row">
+            <form onSubmit={handleSubmit} className="row d-flex flex-column" style={{ height: "25rem" }}>
                 {/* Fullname */}
                 <div className='col-12 position-relative form-input-height'>
                     <section className='h-100 d-flex align-items-center position-absolute fullName w-50'>
@@ -192,7 +214,7 @@ const Profile = () => {
                 </div>
 
                 {/* College Institution */}
-                <div className='col-12 position-relative h-100'>
+                <div className='col-12 position-relative form-input-height'>
                     <section className='d-flex align-items-center position-absolute collegeId w-100'>
                     <select 
                         name='collegeId'
@@ -209,11 +231,16 @@ const Profile = () => {
                     <div className="w-100 h-100 position-absolute text-start bg-white collegeId" style={{ zIndex: 2 }}><strong>College (Institution): </strong> { oldFormValues.collegeId.name } <PencilSquare className="fs-5 text-info" role="button" onClick={() => showInputBox('collegeId')}/></div>
                 </div>
                 {/* Submit button */}
-                <div className='col-12 position-relative d-flex justify-content-start align-items-start'>
+                <div className='col-12 position-relative d-flex justify-content-start align-items-start form-input-height'>
                     <button type='submit' className='btn btn-lg btn-success w-50 signup-button' disabled={formProcessing? 'disabled':''}> <HddFill className='mx-3 text-white'/> Update </button>
                 </div>
+
+                {/* Donation link button */}
+                <div className='col-12 position-relative d-flex justify-content-start align-items-start form-input-height mt-3'>
+                    <button type="button" className='btn btn-lg btn-outline-info w-50' onClick={copyDonationLink}><LinkIcon /> Copy donation link</button>
+                </div>
             </form> 
-        </div>
+            </div>
     )
 }
 

@@ -1,16 +1,29 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useAxios from '../../../api/axios';
+import useAuth from '../../../hooks/auth';
+import { LOGOUT } from '../../../redux/actions';
+import { useDispatch } from 'react-redux'
 
 const ProtectedRoutes = ({children}) => {
-  const isAuth = userIsAuth();
+  const { userIsAuth } = useAuth()
+  const { axiosPrivate } = useAxios()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  return isAuth ? children : <Navigate to="/login" />;
-};
+  useEffect(() => {
+    (async () => {
+      const response = await axiosPrivate.get('/auth/token/verify')
 
-export const userIsAuth = () => {
-  const userIsAuthDetails = localStorage.getItem("auth")
-  
-  return userIsAuthDetails;
+      if(response.data.data.statusCode === 500 && response.data.data.error === true){
+        dispatch({type: LOGOUT})
+        navigate('/login')
+      }
+    
+    })()
+  }, [navigate])
+
+  return (userIsAuth() && children)
 };
 
 export default ProtectedRoutes

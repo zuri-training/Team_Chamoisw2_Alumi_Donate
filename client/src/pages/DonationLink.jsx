@@ -1,31 +1,32 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch } from 'react-redux'
+import { SET_DONATION_LINK } from "../redux/actions";
+import useAuth from './../hooks/auth'
 
 const DonationLink = () => {
     const params = useParams()
+    const { userIsAuth } = useAuth()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    useLayoutEffect(() => {
-        const donationLink = localStorage.getItem('donationLink');
-
-        if(!donationLink){ 
-            localStorage.setItem('donationLink', params.donationLink)
-            const userAuthenticated = localStorage.getItem('auth')
-            
-            if(!userAuthenticated){
-                navigate('/login')
-                return
-            }
+    useEffect(() => {
+        // if user is not logged in 
+        if(!userIsAuth()){
+            dispatch({
+                type: SET_DONATION_LINK,
+                payload: params.donationLink
+            })
     
-            if(userAuthenticated){
-                navigate('/dashboard')
-            }
+            navigate('/signup')
+        }else{
+            // if user is logged in
+            navigate('/dashboard/donate')
         }
-
-        
+            
     },[params.donationLink, navigate])
 
-    return<></>
+    return <></>
 }
 
 export default DonationLink;

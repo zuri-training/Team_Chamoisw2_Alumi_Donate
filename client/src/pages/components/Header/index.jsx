@@ -1,11 +1,18 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Link, useLocation } from 'react-router-dom'
-import { userIsAuth } from "../ProtectedRoutes";
 import './../../styles/navbar.scss'
+import { useSelector } from 'react-redux'
 
 function Header() {
+  const authUser = useSelector(state => (state.auth.user)) 
+  const [isAuthenticated, setIsAuthenticated] = useState(authUser)
+
   const location = useLocation()  
   const headerLinks = useMemo(() => (['donations', 'about-us', 'faq', 'contact-us']), [])
+  
+  useLayoutEffect(() => {
+    setIsAuthenticated(authUser)
+  },[authUser])
 
   useEffect(() => {
     if( !headerLinks.includes(location.pathname.substring(1).trim()) )return
@@ -34,7 +41,7 @@ function Header() {
           <Link className="nav-link mx-3 contact-us" aria-current="page" to="/contact-us">Contact Us</Link>
         
           { 
-            !userIsAuth() && <>
+              !isAuthenticated.donationLink && <>
               <Link to="/login" className="nav-link mx-1">
                 <button className="signin" type="button">Sign-in</button>
               </Link>

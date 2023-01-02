@@ -4,9 +4,8 @@ const Donation = require('./../models/donationsModel')
 const College = require('./../models/collegeModel')
 const jwt = require('jsonwebtoken')
 
-const verifyTransaction = handleAsync(async(req,res) => {
-    // Get the reference from the url params
-    
+const verifyTransaction = handleAsync(async(req,res) => {    
+        // Get the reference from the url params
         const reference = req.params.reference
 
         const paystackResponse = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`,{
@@ -31,7 +30,6 @@ const verifyTransaction = handleAsync(async(req,res) => {
 
             //Add the donation amount to the college's totalDonation amount
             await College.findByIdAndUpdate(collegeId, { '$inc' : { totalDonations: Number(paystackResponse.data.data.amount) / 100 } }).exec()
-
         }
         
         res.status(paystackResponse.status).json({message: paystackResponse.data.message, status: paystackResponse.data.status})
