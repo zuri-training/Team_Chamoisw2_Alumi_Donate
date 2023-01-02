@@ -19,7 +19,7 @@ function SignUp() {
   });
   const [years, setYears] = useState([])
   const [colleges, setColleges] = useState([])
-  const { signupUser, getUserData } = useAuth()
+  const { signupUser } = useAuth()
   const { getColleges, getCollege } = useColleges()
   const { getDonationReduxData } = useDonations()
   const dispatch = useDispatch()

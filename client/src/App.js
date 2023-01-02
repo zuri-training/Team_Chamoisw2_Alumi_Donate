@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useState } from "react"
-import { Routes, Route } from 'react-router-dom'
+import React, { useEffect, useLayoutEffect, useState } from "react"
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import "./index.scss"
@@ -7,7 +7,7 @@ import "./App.scss"
 import "./pages/styles/dashboard.scss"
 import FAQPage from "./pages/FAQ"
 import CheckoutPage from "./pages/components/Checkout/Checkout"
-import SuccessPage from "./pages/components/SuccessPage/SuccessPage"
+import SuccessPage from "./pages/SuccessPage"
 import LandingPage from "./pages/LandingPage"
 import SignupPage from "./pages/SignUp"
 import SigninPage from "./pages/SignIn"
@@ -26,10 +26,15 @@ import ProfilePage from './pages/components/Dashboard/Profile'
 function App() {
   const authUser = useSelector(state => (state.auth.user)) 
   const [isAuthenticated, setIsAuthenticated] = useState(authUser)
+  const navigate = useNavigate()
 
   useLayoutEffect(() => {
     setIsAuthenticated(authUser)
   },[authUser])
+
+  useEffect(() => {
+    window.scrollTo(0,0)
+  }, [navigate])
 
   return (
     <div className="App">

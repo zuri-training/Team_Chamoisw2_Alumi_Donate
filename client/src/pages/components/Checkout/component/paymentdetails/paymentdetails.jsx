@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import PaystackHook from '../../../../../config/paystack.config';
+import PaystackHook from '../../../Paystack';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import { NumericKeyboard } from 'react-numeric-keyboard';
 import { useSelector } from 'react-redux'
+import useAuth from "../../../../../hooks/auth";
+
+const config = {
+  reference: (new Date()).getTime().toString(),
+  email: '',
+  amount: 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+  publicKey: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+  channels: ['card'],
+  currency: 'NGN'
+};
 
 function Card() {
   const [card, setCard] = useState({
@@ -11,8 +21,9 @@ function Card() {
     "expiry": '',
     "number": '',
     "amount": 0,
-    "month": 0,
-    "year": 0
+    "month": '',
+    "year": '',
+    "name": ''
   })
   const [infos, setInfos] = useState({
     vat: 0,
@@ -21,10 +32,15 @@ function Card() {
   })
   const [isOpen, setIsOpen] = useState(false);
   const donationReduxData = useSelector(state => (state.donations))
-  const [donationData, setDonationData] = useState(donationReduxData)
+  const [donationData] = useState(donationReduxData)
+  const { getUserData } = useAuth()
+  const [ formValid, setFormValid ] = useState(false)
+  const [paystackConfig, setPaystackConfig] = useState(config)
   
   useEffect(() => {
-    setCard({ ...card, amount: donationData.amountToDonate })
+    const { college, donationLink, fullName } = getUserData()
+    setCard({ ...card, amount: donationData.amountToDonate, name: fullName })
+    setInfos({...infos, institution: college, uniqueId: donationLink })
   },[])
 
   const handleInputChange = (e, inputField) => {
@@ -32,37 +48,32 @@ function Card() {
 
     //Validate CVV
     if(name === 'cvc'){
+      setCard({...card, 'cvc': value})
       
-      setCard(prev => {
-        return {...prev, 'cvc': value}
-      })
-      
-      if(value.length === 3){ setIsOpen(false); }
-
-      return
+      if(value.length === 3){ setIsOpen(false) }
     }
 
     //Validate card number
     if(name === 'number'){
       //if it is not a number, return
-      if(isNaN(Number(value)) || value.length > 19) return
+      if(isNaN(value) || value.length > 19) return
+
+      setCard({...card, [name]: value });
     }
 
     //Validate amount
     if(name === 'amount'){
       //if it is not a number, return
-      if(isNaN(Number(value))) return
+      if(isNaN((value))) return
 
-
+      setCard({...card, [name]: value });
     }
 
     //Validate month
     if(inputField === "month"){
-      if(value.length > 2)return
+      if(value.length > 2 || value > 12)return
 
       setCard({...card, month: value, expiry: `${value}/${card.year}`})
-
-      return
     }
     
     //Validate Year
@@ -70,14 +81,31 @@ function Card() {
       if(value.length > 2)return
 
       setCard({...card, year: value, expiry: `${card.month}/${value}`})
-      return
     } 
-
-    setCard({...card, [name]: value });
   }
 
+  useEffect(() => {
+      setFormValid(FormValid())
+  }, [card])
+
+  useEffect(() => {
+    setPaystackConfig({
+      ...paystackConfig,
+      amount: card.amount * 100,
+      email: getUserData().email
+    })
+  },[card])
+
   const FormValid = () => {
-    return Object.values(card).every(value => { return value !== "" && value !== 0 && card.expiry.length >= 4 && card.cvc.length === 3})
+    return Object
+      .values(card)
+      .every(value => { 
+        return value !== "" 
+          && value !== 0 
+          && card.expiry.length === 5 
+          && card.cvc.length === 3 
+          && (card.number.length >= 16 && card.number.length <= 19 )
+        })
   }
 
   return (
@@ -86,15 +114,15 @@ function Card() {
      <div className="col-md-7 col-sm-12 d-flex flex-column align-items-center">
       {/* Card Number */}
       <div className="mb-4 w-75 d-flex flex-column align-items-start">
-        <h5 for="card-number" className="form-label text-start fs-5 site-text-color">Card Number</h5>
-        <span className="site-text-grey text-start fs-7" id="basic-addon3">Enter the 10 digit number on the card</span>
-        <input type="text" name="number" value={card.number} onChange={handleInputChange} className="form-control" id="card-number" aria-describedby="basic-addon3" />
+        <h5 className="form-label text-start fs-5 site-text-color">Card Number</h5>
+        <span className="site-text-grey text-start fs-7" id="basic-addon1">Enter the number on the card</span>
+        <input type="text" name="number" value={card.number} onChange={handleInputChange} className="form-control" id="card-number" aria-describedby="basic-addon1" />
       </div>
 
       {/* Amount to donate */}
       <div className="mb-4 w-75 d-flex flex-column align-items-start">
-        <h5 for="card-email" className="form-label text-start fs-5 site-text-color">Enter amount</h5>
-        <input type="text" name="amount" value={card.amount} onChange={handleInputChange} className="form-control" id="card-amount" aria-describedby="basic-addon3" />
+        <h5 className="form-label text-start fs-5 site-text-color">Enter amount</h5>
+        <input type="text" name="amount" value={card.amount} onChange={handleInputChange} className="form-control" id="card-amount" aria-describedby="basic-addon2" />
       </div>
 
       {/* CVV Number */}
@@ -134,7 +162,7 @@ function Card() {
       </div>
      
       <div className="w-75">
-      { FormValid() ? <PaystackHook paymentDetails={card} /> : "" }
+      { formValid && <PaystackHook paystackConfig={paystackConfig} /> }
       </div>
     </div>
 
