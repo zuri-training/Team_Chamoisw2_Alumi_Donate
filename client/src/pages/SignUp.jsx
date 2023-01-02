@@ -41,7 +41,6 @@ function SignUp() {
         try {
           const response = await getCollege( getDonationReduxData().donationLink )
           const collegeFound = response.data.data.message
-          console.log(response)
           if(collegeFound.length === 1){
             setColleges(collegeFound)
             setFormValues({ ...formValues, collegeId: collegeFound[0]._id })  

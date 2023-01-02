@@ -107,7 +107,7 @@ const Profile = () => {
     }
 
     const copyDonationLink = () => {
-        const { donationLink } = getDonationReduxData()
+        let { donationLink } = getDonationReduxData()
         
         navigator.clipboard.writeText(`${process.env.REACT_APP_CLIENT_URL}/donate/${donationLink.replaceAll('"', '')}`);
 
