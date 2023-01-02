@@ -1,9 +1,11 @@
 import useAxios from './../api/axios'
 import { useSelector } from 'react-redux'
+import { useState } from 'react'
 
 const useDonations = () => {
     const { axiosPublic } = useAxios()
-    const donationReduxData = useSelector(state => (state.donations))
+    const donationData = useSelector(state => (state.donations))
+    const [donationReduxData] = useState(donationData)
 
     const getDonationReduxData = () => {
         return donationReduxData
