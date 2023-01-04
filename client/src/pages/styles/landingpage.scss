@@ -1,12 +1,10 @@
 .hero-div .text-div{
-    width: 60%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     position: absolute;
     z-index: 3;
-    top: 30%;
 }
 
 .alma-mater-text {
@@ -77,15 +75,14 @@
         border-radius: 50%;
     }
     .testimonial .box{
-        height: 360px;
         color: #071D57;
         padding: 20px;
         background: #F5F5F5;
         position: relative;
 
         img{
-            position: absolute;
-            bottom: 10px;
+            position: relative;
+            bottom: 10% !important;
         }
     }
 }

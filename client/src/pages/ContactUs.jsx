@@ -4,7 +4,7 @@ const ContactUs = () => {
   return (
     <>
       <main className='container my-5'>
-       <h1>&#128679; &#128679; &#128679; Page is under construction.</h1>
+       <h1>Contact Us</h1>
       </main>
     </>
   )

@@ -38,8 +38,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className="top-navbar col-12 position-fixed top-0 bg-white site-text-color"><Header /></div>
-      <div className="row app-body p-0">
+      <Header />
+      <div className="row app-body p-0 m-0">
         {
           isAuthenticated.donationLink && 
           <div className="col-md-3">
@@ -48,7 +48,7 @@ function App() {
             </nav>
           </div>
         }
-      <div className={ isAuthenticated.donationLink ? "col-md-9 page-content": "col-md-12 page-content"}>
+      <div className={ isAuthenticated.donationLink ? "col-md-9 page-content m-0 px-3": "col-md-12 page-content m-0 px-3"}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninPage />} />
@@ -93,7 +93,7 @@ function App() {
           </Route>
       </Routes>
       </div>
-      <div className="col-12 footer p-0 mt-5"><Footer /></div>
+      <Footer />
       </div>
     </div>
   )

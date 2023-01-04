@@ -5,6 +5,7 @@ import useAuth from './../hooks/auth';
 import useDonations from './../hooks/donations'
 import SignupImage from './../assets/images/signup-image.svg';
 import { RESET_DONATION_LINK } from './../redux/actions'
+import { Toast } from './components/ToastAlert';
 import './styles/signup.scss'
 
 function SignUp() {
@@ -24,6 +25,7 @@ function SignUp() {
   const { getDonationReduxData } = useDonations()
   const dispatch = useDispatch()
   const [formProcessing, setFormProcessing] = useState(false)
+  const [termsAgreed, setTermsAgreed] = useState(false)
 
   useLayoutEffect(() => {
     const yearsArr = []
@@ -73,8 +75,46 @@ function SignUp() {
     });
   }
 
+  const handleTermsAgreed = (e) => {
+    setTermsAgreed(e.target.checked)
+  }
+
+  const signupFormValid = () => {
+    if(Object.values(formValues).some(val => (val === ''))){
+      Toast.fire({
+        icon: "error",
+        title: "One or more form fields has not been filled."
+      });
+
+      return false
+    } 
+    
+    if(formValues.password !== formValues.confirmPassword){
+      Toast.fire({
+        icon: "error",
+        title: "Password and Confirmpassword do not match"
+      });
+
+      return false
+    }
+    
+    if(!termsAgreed){
+      Toast.fire({
+        icon: "error",
+        title: "You must agree to our terms and conditions before signup"
+      });
+
+      return false
+    }  
+
+    return true
+  }
+
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if(!signupFormValid()) return
+
     setFormProcessing(prev => (true))
     await signupUser(formValues)
     setFormProcessing(prev => (false))
@@ -82,12 +122,12 @@ function SignUp() {
 
   return (
     colleges.length > 0 &&
-    <section className='signup-page'>
+    <section className='signup-page mb-5'>
     <div className='row justify-content-center'>
-      <div className="col-md-5 d-flex justify-content-end">
+      <div className="col-md-5 d-md-flex justify-content-md-end d-sm-none">
         <img src={SignupImage} alt="signup" style={{width: "100%", height: "100vh"}} />
       </div>
-      <div className="col-md-5 d-flex flex-column justify-content-start">
+      <div className="col-md-5 col-sm-10 d-flex flex-column justify-content-md-start justify-content-sm-center">
         <h1 className='mt-5'>Sign up to Alumni Donate</h1>
     <form onSubmit={handleSubmit}>
       <input
@@ -162,10 +202,10 @@ function SignUp() {
       {/* Terms and Conditions section */}
       <div className='row'>
         <div className='col-12 d-flex mb-2'>
-          <input type="checkbox" className='mb-0' />&nbsp;&nbsp;<span> By registering, you are agreeing to our terms and conditions</span>
+          <input type="checkbox" className='mb-0' onChange={handleTermsAgreed}/>&nbsp;&nbsp;<span className='fs-6'> By registering, you are agreeing to our terms and conditions</span>
         </div>
       </div>
-      <button type='submit' className='btn btn-lg w-100 signup-button' disabled={formProcessing? 'disabled':''}>Signup</button>
+      <button type='submit' className='btn btn-lg w-100 signup-button' disabled={formProcessing ? 'disabled':''}>Signup</button>
     </form>
     </div>
     </div>

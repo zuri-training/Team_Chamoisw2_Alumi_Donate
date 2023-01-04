@@ -32,12 +32,12 @@ const SignIn = () => {
   }
 
   return (
-    <div className="sign-in row justify-content-center text-left">
-     <div className='col-md-10 d-flex flex-column justify-content-start align-items-start mt-1'>
+    <div className="sign-in row justify-content-center text-left mb-5">
+     <div className='col-md-10 col-sm-12 d-flex flex-column justify-content-sm-center justify-content-md-start align-items-sm-center align-items-md-start mt-1'>
      <h4>Welcome</h4>
      <p>Input email and password to login into your account</p>
      </div>
-     <div className="col-md-5 d-flex align-items-center justify-content-end">
+     <div className="col-md-5 col-sm-12 d-flex align-items-center justify-content-md-end justify-content-sm-center">
       <div className='row'>
         <div className='col-12'>
           <form onSubmit={(e) => handleSubmit(e)} className="w-100" autoComplete="off">
@@ -68,7 +68,7 @@ const SignIn = () => {
         </div>
       </div>
       </div>
-      <div className="col-md-5 d-flex align-items-end ">
+      <div className="col-md-5 d-flex align-items-end d-sm-none d-xs-none d-md-flex">
       <img src={LoginImage} alt="secure-login" style={{width: "100%", height: "100vh"}} />
       </div>
     </div>
