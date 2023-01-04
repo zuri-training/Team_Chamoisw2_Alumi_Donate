@@ -52,15 +52,15 @@ const LandingPage = () => {
           <div className='row testimonial justify-content-center mt-4' style={{ maxHeight: "64rem" }}>
             <div className="col-sm-12 col-md-6 col-lg-3 mb-5 mx-3 box d-flex flex-column justify-content-between align-items-center h-100">
               
-              <p style={{ height: "16rem" }}>The Alumni Donation platform helped us get off the ground with our project. After the donation $60,000 in funding from Alumni of our Institution from all over the world. Your help was instrumental in this success Of our Lecture halls project.</p>
-              <br /> <img src={testimonial1} alt="testimonial1" className='img-fluid'/>
+              <p style={{ height: "14rem" }}>The Alumni Donation platform helped us get off the ground with our project. After the donation $60,000 in funding from Alumni of our Institution from all over the world. Your help was instrumental in this success Of our Lecture halls project.</p>
+              <img src={testimonial1} alt="testimonial1" className='img-fluid'/>
               
             </div>
 
             <div className="col-sm-12 col-md-6 col-lg-3 mb-5 mx-3 box d-flex flex-column justify-content-between align-items-center h-100">
               
-              <p style={{ height: "16rem" }}>Your generosity and commitment is exactly the kind of community involvement we need to keep The Nigerian Universities going strong. The many scholarships, grants, and financial aid opportunities to University students are a testament to the support of the alumni, of the University.</p>
-              <br /><img src={testimonial2} alt="testimonial2" className="img-fluid" />
+              <p style={{ height: "14rem" }}>Your generosity and commitment is exactly the kind of community involvement we need to keep The Nigerian Universities going strong. The many scholarships, grants, and financial aid opportunities to University students are a testament to the support of the alumni, of the University.</p>
+              <img src={testimonial2} alt="testimonial2" className="img-fluid" />
               
             </div>
           </div>

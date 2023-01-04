@@ -11,6 +11,7 @@ import { store } from './redux/store'
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 
+
 const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

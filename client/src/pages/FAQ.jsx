@@ -2,14 +2,16 @@ import React from "react"
 import './styles/faq.scss'
 
 function FAQ() {
+
   return (
-       <main className="faq-page col-12 w-100 px-5 site-text-color position-relative" style={{ height: "100%", overflowY: "visible" }}>
+       <main className="faq-page row w-100 px-1 site-text-color position-relative">
         <div className="faqs">
-         <h1>FAQs</h1>
+         <h1 className="my-0">FAQs</h1>
         </div>
-        <section className="faq-bg d-flex justify-content-center" style={{ backgroundImage: "url('./../img/backgroundimage.png')", height: "900px" }}>         
-          <div className="position-relative bg-white w-100 h-100 my-0" style={{ zIndex: 2, opacity: 0.4 }}></div>
-          <div className="question-box position-absolute w-75" style={{ zIndex: 3, padding: "2rem", height: "100" }}>
+
+        <section className="faq-bg p-0 position-relative d-flex justify-content-center w-100" style={{ height: "120vh", backgroundImage: "url('/img/backgroundimage.svg')", backgroundSize: "cover", backgroundPosition: "center" }}>         
+          <div className="position-relative bg-white w-100 my-0" style={{ zIndex: 2, opacity: 0.4 }}></div>
+          <div className="question-box position-absolute w-75 d-flex flex-column justify-content-center align-items-center px-3" style={{ zIndex: 30, top: "80px" }}>
           <h4>Frequently asked questions about Alumni Donate</h4>
            
           <h3>How do I register my organization?</h3>
@@ -33,7 +35,7 @@ function FAQ() {
 
            
           <h3>How do I copy my organization donation link?</h3>
-          <p>Go to profile and fill in account information, then click on verify. 
+          <p>Go to profile and fill in account information, then click on verify. <br/>
             An email will be sent to you after 2 to 3 business days to confirm that you have successfully linked your account.</p>
 
            
