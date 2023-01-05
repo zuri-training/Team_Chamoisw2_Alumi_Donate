@@ -17,6 +17,10 @@ const collegeSchema = new Schema({
   donationLink: {
     type: String,
     required: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   }
 });
 
