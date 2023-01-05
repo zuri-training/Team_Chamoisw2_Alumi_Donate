@@ -27,6 +27,10 @@ const userSchema = new Schema({
   gradYear: {
     type: Number,
     required: true,
+  },
+  newsletterSub: {
+    type: Boolean,
+    default: false
   }
 });
 
