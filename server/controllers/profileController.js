@@ -75,7 +75,24 @@ const updateUserData = handleAsync(async (req, res) => {
     res.status(200).json(handleResponse({...(userData._doc), updatedToken}))
 })
 
+const updateNewsletterSub = handleAsync(async (req, res) => {
+    const tokenVerified = verifyJwtToken(req.headers.authorization)
+
+    if(!tokenVerified){
+        throw createApiError("User not authorized", 400)
+    }
+
+    const subscribed = await User.findByIdAndUpdate(tokenVerified.userId, { $set : { newsletterSub: true } }, { new : true }).exec()
+
+    if(subscribed){
+        return res.status(200).json(handleResponse({ message: "You have successfully subscribed to our newsletter"}))
+    }else{
+        throw createApiError("Some errors were encountered, Newsletter subscription failed", 500)
+    }
+})
+
 module.exports = {
     getUserData,
-    updateUserData
+    updateUserData,
+    updateNewsletterSub
 }

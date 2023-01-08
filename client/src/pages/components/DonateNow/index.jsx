@@ -4,13 +4,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import { SET_DONATION_AMOUNT } from './../../../redux/actions'
-
+import useUserProfile from './../../../hooks/profile'
 
 const DonateNow = () => {
     const [amountToDonate, setAmountToDonate] = useState(1000)
     const [anonymousAlumni, setAnonymousAlumni] = useState(false)
+    const [newsletterSub, setNewsletterSub] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const { subscribeToNewsletter } = useUserProfile()
 
     const deactivateLastSelectedAmount = () => {
         document.querySelector('.selected-amount').classList.remove('selected-amount')
@@ -40,7 +42,12 @@ const DonateNow = () => {
         navigate(`/dashboard/donate/checkout`)
     }
 
-    const saveDonationAmount = () => {
+    const saveDonationAmount = async () => {
+        // If user subscribes to newsletter, update their DB record
+        if(newsletterSub){
+            await subscribeToNewsletter()
+        }
+
         dispatch({
             type: SET_DONATION_AMOUNT,
             payload: {
@@ -54,6 +61,10 @@ const DonateNow = () => {
 
     const handleSetAnonymous = (e) => {
         setAnonymousAlumni(e.target.checked)
+    }
+    
+    const handleNewsletterSub = (e) => {
+        setNewsletterSub(e.target.checked)
     }
 
     return (
@@ -114,10 +125,10 @@ const DonateNow = () => {
                 {/* Subscription options */}
                 <div className="row mt-5">
                     <div className="col-12 d-flex justify-content-start">
-                        <input type="checkbox" onChange={e => handleSetAnonymous(e)}/> &nbsp;Don’t display my name publicly on the fundraiser.
+                        <input type="checkbox" onChange={e => handleSetAnonymous(e)}/> &nbsp;Don't display my name publicly on the fundraiser.
                     </div>
                     <div className="col-12 d-flex justify-content-start">
-                        <input type="checkbox"/> &nbsp;Get occassional updates on the activities of your institution. You may unsubscribe at any time.
+                        <input type="checkbox" onChange={e => handleNewsletterSub(e)} /> &nbsp;Get occassional updates on the activities of your institution. You may unsubscribe at any time.
                     </div>
                 </div>
 

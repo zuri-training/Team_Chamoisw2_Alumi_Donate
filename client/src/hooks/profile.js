@@ -63,9 +63,21 @@ const useUserProfile = () => {
     
     }
 
+    const subscribeToNewsletter = async () => {
+        const response = await axiosPrivate.patch('/profile/newsletter/subscription')
+
+        if(false === response.data.data.error){
+            Toast.fire({
+                icon: "success",
+                title: "Successfully subscribed to our newsletter"
+            })
+        }
+    }
+
     return {
         getUserData,
-        updateUserData
+        updateUserData,
+        subscribeToNewsletter
     }
 }
 
