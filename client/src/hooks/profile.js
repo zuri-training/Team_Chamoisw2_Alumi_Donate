@@ -11,15 +11,15 @@ const useUserProfile = () => {
         try{
             const result = await axiosPrivate.get('/profile')
 
-            if(result.status === 200){
-                return result.data
+            if(false === result.data.data.error){
+                return result.data.data.message
             }else{
-                throw new Error(result.data)
+                throw new Error(result.data.data.message)
             }
         }catch(err){
             Toast.fire({
                 icon: "error",
-                title: err.response ? err.response.data.message : err.message
+                title: err.message
             });
         }
     }
@@ -38,21 +38,21 @@ const useUserProfile = () => {
                 // If the user changed their institution, their donation link is also updated
                 dispatch({
                     type: SET_DONATION_LINK,
-                    payload: result.data.data.collegeId.donationLink
+                    payload: result.data.data.message.collegeId.donationLink
                 })
 
                 // The token also contains the collegeId, so a new token is generated on
                 // college institution change
-                if(result.data.data.updatedToken !== ''){
+                if(result.data.data.message.updatedToken !== ''){
                     dispatch({
                         type: UPDATE_TOKEN,
-                        payload: result.data.data.updatedToken
+                        payload: result.data.data.message.token
                     })
                 }
 
-                return result.data.data
+                return result.data.data.message
             }else{
-                throw new Error(result.data.data)
+                throw new Error(result.data.data.message)
             }
         }catch(err){            
             Toast.fire({
@@ -70,6 +70,11 @@ const useUserProfile = () => {
             Toast.fire({
                 icon: "success",
                 title: "Successfully subscribed to our newsletter"
+            })
+        }else{
+            Toast.fire({
+                icon: "error",
+                title: "Some errors were encountered, Please try to subscribe later"
             })
         }
     }
