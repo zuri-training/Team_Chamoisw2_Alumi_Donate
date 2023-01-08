@@ -21,13 +21,9 @@ const Profile = () => {
 
     useEffect(() => {
         (async () => {
-            try{
-                const userData = (await getUserData()).data   
-                setFormValues({...userData, password: '', collegeId: userData.collegeId._id})
-                setOldFormValues({...userData, password: ''})
-            }catch(err){
-                console.log(err)
-            }
+            const userData = await getUserData()   
+            setFormValues({...userData, password: '', collegeId: userData.collegeId._id})
+            setOldFormValues({...userData, password: ''})
         })()
     }, [])
 
@@ -43,13 +39,8 @@ const Profile = () => {
     // Fetches the list of all college institutions
     useEffect(() => {
         (async () => {
-            try {
             const response = await getColleges()
-            setColleges(response.data.message)
-            } catch (error) {
-            console.log(error)
-            }
-            
+            setColleges(response)
         })()
     },[getColleges])
 
@@ -67,8 +58,8 @@ const Profile = () => {
         updatedValues = await updateUserData(formValues)
 
         if(updatedValues){
-            setOldFormValues({...updatedValues.data, password: ''})
-            setFormValues({...updatedValues.data, password: ''})
+            setOldFormValues({...updatedValues, password: ''})
+            setFormValues({...updatedValues, password: ''})
             setFormProcessing(prev => (false))
 
             // Hides all the input fields of the form
@@ -77,7 +68,7 @@ const Profile = () => {
             })
 
             // Updates the donation link
-            dispatch({ type: SET_DONATION_LINK, payload: updatedValues.data.collegeId.donationLink })
+            dispatch({ type: SET_DONATION_LINK, payload: updatedValues.collegeId.donationLink })
         }else {
             setFormProcessing(prev => (false))
 

@@ -40,27 +40,17 @@ function SignUp() {
     // Check if the signup page is being accessed via a donation link
     if(getDonationReduxData().donationLink !== ''){
       (async () => {
-        try {
-          const response = await getCollege( getDonationReduxData().donationLink )
-          const collegeFound = response.data.data.message
+          const collegeFound = await getCollege( getDonationReduxData().donationLink )
+          
           if(collegeFound.length === 1){
             setColleges(collegeFound)
             setFormValues({ ...formValues, collegeId: collegeFound[0]._id })  
-          }else{
-            console.log(response.data)
           }
-        } catch (error) {
-          console.log(error)
-        }
       })()  
     }else{
       (async () => {
-        try {
           const response = await getColleges()
-          setColleges(response.data.message)
-        } catch (error) {
-          console.log(error)
-        }
+          setColleges(response)
       })()
     }
   },[])

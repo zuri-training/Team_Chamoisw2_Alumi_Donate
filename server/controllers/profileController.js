@@ -25,7 +25,7 @@ const getUserData  = handleAsync(async (req, res) => {
         })
         .populate({path: 'collegeId', select: ['name']}).exec()
         
-    return res.status(200).json(handleResponse(userData))
+    return res.status(200).json(handleResponse({message: userData}))
 })
 
 const updateUserData = handleAsync(async (req, res) => {
@@ -72,7 +72,7 @@ const updateUserData = handleAsync(async (req, res) => {
         updatedToken = (await generateToken({_id: tokenVerified.userId, collegeId: req.body.collegeId})).accessToken
     }
     
-    res.status(200).json(handleResponse({...(userData._doc), updatedToken}))
+    res.status(200).json(handleResponse({message: {...(userData._doc), token: updatedToken}}))
 })
 
 const updateNewsletterSub = handleAsync(async (req, res) => {
