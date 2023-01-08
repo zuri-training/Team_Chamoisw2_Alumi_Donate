@@ -8,8 +8,9 @@ function handleAsync(callback) {
       // Fire callback function
       await callback(req, res, next);
     } catch (error) {
+      console.log('Error: ', error)
       // Respond with statusCode if defined else 500
-      res.status(200).json(handleResponse({message: error.message, statusCode: error.statusCode || 500, error: true}, error.message));
+      res.status(200).json({data: {message: error.message, statusCode: error.statusCode || 500, error: true}}).end();
     }
   };
 }
@@ -40,8 +41,8 @@ function createApiError(message = "Internal Server Error", statusCode = 500) {
 function handleResponse(data = {}, message = "success") {
   // Returns standardised success response format
   return {
+    data: { ...data, error: false },
     message,
-    data,
     success: true
   };
 }
@@ -49,7 +50,7 @@ function handleResponse(data = {}, message = "success") {
 // Returns the values encoded in the jwt token if verification is successful
 // sample Usage verifyJwtToken(authorizationHeader)
 function verifyJwtToken(authorizationHeader = "") {
-  if(!authorizationHeader) throw new createApiError("User not authorized", 400)
+  if(!authorizationHeader) throw createApiError("User not authorized", 400)
   
   const token = authorizationHeader.split(' ')[1]
 

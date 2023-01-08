@@ -1,6 +1,6 @@
 import useAxiosPrivate from "../api/axios"
 import { Toast } from "../pages/components/ToastAlert"
-import { SET_DONATION_LINK } from "../redux/actions"
+import { SET_DONATION_LINK, UPDATE_TOKEN } from "../redux/actions"
 import { useDispatch } from 'react-redux'
 
 const useUserProfile = () => {
@@ -28,8 +28,8 @@ const useUserProfile = () => {
        
         try{
             const result = await axiosPrivate.patch("/profile/update", JSON.stringify(formValues))
-
-            if(result.status === 200){
+           
+            if(false === result.data.data.error){
                 Toast.fire({
                     icon: "success",
                     title: "Update successful"
@@ -41,31 +41,43 @@ const useUserProfile = () => {
                     payload: result.data.data.collegeId.donationLink
                 })
 
-                return result.data
+                // The token also contains the collegeId, so a new token is generated on
+                // college institution change
+                if(result.data.data.updatedToken !== ''){
+                    dispatch({
+                        type: UPDATE_TOKEN,
+                        payload: result.data.data.updatedToken
+                    })
+                }
+
+                return result.data.data
             }else{
-                throw new Error(result.data)
+                throw new Error(result.data.data)
             }
-        }catch(err){
-            let errMessage = ''
-            
-            // Server side validation error from express-validator
-            if(err.response){
-                errMessage = err.response.data.message
-            }else{
-                errMessage = err.message
-            }
-            
+        }catch(err){            
             Toast.fire({
                 icon: "error",
-                html: errMessage
+                html: err.message
             });
         }
-        // 
+    
+    }
+
+    const subscribeToNewsletter = async () => {
+        const response = await axiosPrivate.patch('/profile/newsletter/subscription')
+
+        if(false === response.data.data.error){
+            Toast.fire({
+                icon: "success",
+                title: "Successfully subscribed to our newsletter"
+            })
+        }
     }
 
     return {
         getUserData,
-        updateUserData
+        updateUserData,
+        subscribeToNewsletter
     }
 }
 

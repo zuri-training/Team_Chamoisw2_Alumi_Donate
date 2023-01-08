@@ -37,18 +37,18 @@ const userSignup = handleAsync( async (req, res, next) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-          throw new createApiError(errors.array().map(errObj => ("&bull; " + errObj.msg)).join('<br /><br />'), 422)
+          throw createApiError(errors.array().map(errObj => ("&bull; " + errObj.msg)).join('<br /><br />'), 422)
       }
 
       let { email, password, fullName, phoneNumber, collegeId, gradYear } = req.body
   
       if (await userExist(email)) {
-        throw new createApiError("Email already in use", 400)
+        throw createApiError("Email already in use", 400)
       }
   
       bcrypt.hash(password, 10, async function (err, hash) {
         if (err) {
-          throw new createApiError("Account could not be created", 400)
+          throw createApiError("Account could not be created", 400)
         }
 
         const newUser = new User({
@@ -90,25 +90,25 @@ const userLogin = handleAsync( async (req, res, next) => {
         const { email, password } = req.body   
 
         if (!email || !password) {
-          throw new createApiError("Please provide email and password", 400)
+          throw createApiError("Please provide email and password", 400)
         }
 
         let userFound = await User.findOne({ email })
 
         if (!userFound) {
-          throw new createApiError("A user for this email could not be found!", 400)
+          throw createApiError("A user for this email could not be found!", 400)
         }
         
         const passwordMatch = await bcrypt.compare(password,userFound.password)
 
         if (!passwordMatch) {
-          throw new createApiError("Invalid credentials!", 400 )
+          throw createApiError("Invalid credentials!", 400 )
         }
-
-        userFound = await userFound.populate('collegeId')
 
         const { accessToken } = await generateToken(userFound)
 
+        userFound = await userFound.populate('collegeId')
+        
         res.status(200).json(handleResponse({
             message: "User logged in successfully",
             token: accessToken,
