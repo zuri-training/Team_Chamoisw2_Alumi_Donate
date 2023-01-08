@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useLayoutEffect, useMemo } from 'react'
+import React, { useEffect, useState, useLayoutEffect } from 'react'
 import useUserProfile from './../../../../hooks/profile'
 import useColleges from './../../../../hooks/colleges'
-import useAuth from '../../../../hooks/auth'
 import { PencilSquare, XCircle, HddFill, PersonBoundingBox, Link as LinkIcon } from 'react-bootstrap-icons'
 import './../../../styles/profile.scss'
 import { Toast } from '../../ToastAlert'
@@ -20,7 +19,7 @@ const Profile = () => {
     const { getDonationReduxData } = useDonations()
     const dispatch = useDispatch()
 
-    useMemo(() => {
+    useEffect(() => {
         (async () => {
             try{
                 const userData = (await getUserData()).data   

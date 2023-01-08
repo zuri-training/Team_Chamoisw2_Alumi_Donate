@@ -4,9 +4,9 @@ import { Toast } from '../pages/components/ToastAlert'
 const useColleges =  () => {
     const { axiosPublic } = useAxios()
 
-    const getColleges = () => {
+    const getColleges = async () => {
         try{
-            return axiosPublic.get("/colleges/all");
+            return await axiosPublic.get("/colleges/all");
         }catch(err){
             Toast.fire({
                 icon: "error",
@@ -15,9 +15,9 @@ const useColleges =  () => {
         }
     }
 
-    const getCollege = (collegeDonationLink) => {
+    const getCollege = async (collegeDonationLink) => {
         try{
-            return axiosPublic.get(`/colleges/single/${collegeDonationLink}`);
+            return await axiosPublic.get(`/colleges/single/${collegeDonationLink}`);
         }catch(err){
             Toast.fire({
                 icon: "error",

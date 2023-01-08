@@ -1,12 +1,12 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import useColleges from '../hooks/colleges';
 import useAuth from './../hooks/auth';
 import useDonations from './../hooks/donations'
 import SignupImage from './../assets/images/signup-image.svg';
-import { RESET_DONATION_LINK } from './../redux/actions'
 import { Toast } from './components/ToastAlert';
 import './styles/signup.scss'
+import { useDispatch } from 'react-redux';
+import { SET_LOADER_VISIBLE } from '../redux/actions';
 
 function SignUp() {
   const [formValues, setFormValues] = useState({
@@ -23,9 +23,9 @@ function SignUp() {
   const { signupUser } = useAuth()
   const { getColleges, getCollege } = useColleges()
   const { getDonationReduxData } = useDonations()
-  const dispatch = useDispatch()
   const [formProcessing, setFormProcessing] = useState(false)
   const [termsAgreed, setTermsAgreed] = useState(false)
+  const dispatch = useDispatch()
 
   useLayoutEffect(() => {
     const yearsArr = []
@@ -46,9 +46,6 @@ function SignUp() {
           if(collegeFound.length === 1){
             setColleges(collegeFound)
             setFormValues({ ...formValues, collegeId: collegeFound[0]._id })  
-            //Remove the donationLink from redux store
-            dispatch({ type: RESET_DONATION_LINK })
-
           }else{
             console.log(response.data)
           }
@@ -115,9 +112,15 @@ function SignUp() {
 
     if(!signupFormValid()) return
 
+    // Show loading 
+    dispatch({ type: SET_LOADER_VISIBLE, payload: true })
+
     setFormProcessing(prev => (true))
     await signupUser(formValues)
     setFormProcessing(prev => (false))
+
+    // Hide loading
+    dispatch({ type: SET_LOADER_VISIBLE, payload: false })
   }
 
   return (

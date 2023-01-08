@@ -5,6 +5,7 @@ import 'react-credit-cards/es/styles-compiled.css';
 import { NumericKeyboard } from 'react-numeric-keyboard';
 import { useSelector } from 'react-redux'
 import useAuth from "../../../../../hooks/auth";
+import useDonations from "../../../../../hooks/donations";
 
 const config = {
   reference: (new Date()).getTime().toString(),
@@ -31,8 +32,8 @@ function Card() {
     uniqueId: ''
   })
   const [isOpen, setIsOpen] = useState(false);
-  const donationReduxData = useSelector(state => (state.donations))
-  const [donationData] = useState(donationReduxData)
+  const { getDonationReduxData } = useDonations()
+  const [donationData] = useState(getDonationReduxData())
   const { getUserData } = useAuth()
   const [ formValid, setFormValid ] = useState(false)
   const [paystackConfig, setPaystackConfig] = useState(config)
@@ -86,15 +87,13 @@ function Card() {
 
   useEffect(() => {
       setFormValid(FormValid())
-  }, [card])
 
-  useEffect(() => {
-    setPaystackConfig({
-      ...paystackConfig,
-      amount: card.amount * 100,
-      email: getUserData().email
-    })
-  },[card])
+      setPaystackConfig({
+        ...paystackConfig,
+        amount: card.amount * 100,
+        email: getUserData().email
+      })
+  }, [card])
 
   const FormValid = () => {
     return Object

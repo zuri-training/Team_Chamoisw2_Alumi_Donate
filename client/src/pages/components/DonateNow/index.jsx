@@ -7,7 +7,7 @@ import { SET_DONATION_AMOUNT } from './../../../redux/actions'
 
 
 const DonateNow = () => {
-    const [amountToDonate, setAmountToDonate] = useState(0)
+    const [amountToDonate, setAmountToDonate] = useState(1000)
     const [anonymousAlumni, setAnonymousAlumni] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()

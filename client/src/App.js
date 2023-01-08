@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react"
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import useLoading from "./hooks/loading"
 
 import "./index.scss"
 import "./App.scss"
@@ -22,10 +23,13 @@ import Sidebar from "./pages/components/Sidebar"
 import Header from './pages/components/Header'
 import Footer from './pages/components/Footer'
 import ProfilePage from './pages/components/Dashboard/Profile'
+import Loader from "./pages/components/Loading"
 
 function App() {
   const authUser = useSelector(state => (state.auth.user)) 
   const [isAuthenticated, setIsAuthenticated] = useState(authUser)
+  const { loaderVisible } = useLoading()
+  const [isLoading, setIsLoading] = useState(loaderVisible)
   const navigate = useNavigate()
 
   useLayoutEffect(() => {
@@ -33,11 +37,16 @@ function App() {
   },[authUser])
 
   useEffect(() => {
+    setIsLoading(loaderVisible)
+  },[loaderVisible]) 
+
+  useEffect(() => {
     window.scrollTo(0,0)
   }, [navigate])
 
   return (
     <div className="App">
+      <Loader visible={ isLoading } />
       <Header />
       <div className="row app-body p-0 m-0">
         {

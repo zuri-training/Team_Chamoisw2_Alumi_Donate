@@ -1,16 +1,16 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDonations from './../hooks/donations';
 
 const Donations = () => {
-    const getDonations = useDonations()
+    const { getDonations } = useDonations()
     const [donationsList, setDonationsList] = useState([])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         (async () => {
             setDonationsList(await getDonations())
         })()
-    }, [getDonations])
-    
+    }, [])
+
     return (
         <>
         <main className='container h-auto'>
@@ -33,7 +33,7 @@ const Donations = () => {
                                 <th scope="row">{ index + 1 }</th>
                                 <td>{ donationInfo.collegeId.name }</td>
                                 <td>{ donationInfo.collegeId.location }</td>
-                                <td>{ donationInfo.userId.fullName }</td>
+                                <td>{ donationInfo.isAnonymous === true ? 'Anonymous Alumni' : donationInfo.userId.fullName }</td>
                                 <td>{ donationInfo.userId.gradYear }</td>
                                 <td>{ donationInfo.amount }</td>
                             </tr>

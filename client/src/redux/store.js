@@ -1,5 +1,6 @@
 import authReducer from './reducers/authReducer';
 import donationsReducer from './reducers/donationReducer';
+import uiReducer from './reducers/uiReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
@@ -21,7 +22,8 @@ const persistConfig = {
 
 export const rootReducers = combineReducers({
   auth: authReducer,
-  donations: donationsReducer
+  donations: donationsReducer,
+  ui: uiReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);

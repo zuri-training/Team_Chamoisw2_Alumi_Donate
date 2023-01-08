@@ -23,12 +23,17 @@ const PaystackHook = ({paystackConfig}) => {
 
       // verify transaction
       (async () => {        
-        try{
+        
           const verificationResponse = await axiosPrivate.post(`/transaction/verify/${response.reference}`, donationsInfo)
           
+          if(verificationResponse.data.data.status !== true ){
+            
+            Toast.fire({
+              icon: "error",
+              title: "Verification failed"
+            })
 
-          if(verificationResponse.status !== 200){
-            throw new Error("Operation failed")
+            return
           }
 
           Toast.fire({
@@ -37,15 +42,7 @@ const PaystackHook = ({paystackConfig}) => {
           })
 
           // redirect to payment success page
-          navigate('/donate/success')
-        }catch(err){
-          console.log(err)
-
-          Toast.fire({
-            icon: "error",
-            title: err.message
-          })
-        }
+          navigate('/dashboard/donate/success')
       })()
       
     };
