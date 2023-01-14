@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const SignIn = () => {
   const [formValues, setFormValues] = useState({ email: '', password: ''});
-  const [formSubmit, setFormSubmit] = useState(false)
   const { loginUser, userIsAuth }  = useAuth()
   const navigate = useNavigate() 
 
@@ -26,9 +25,8 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmit(prev => (true))
+
     await loginUser(formValues)
-    setFormSubmit(prev => (false))
   }
 
   return (
@@ -60,7 +58,7 @@ const SignIn = () => {
             autoComplete="off"
           />
           <div className='row mb-5'><div className='col-12 d-flex justify-content-between'><span><input type={"checkbox"} /> Remember me</span> <span>Forgot Password?</span></div></div>
-          <button type='submit' className='btn btn-lg login-button' disabled={formSubmit ? 'disabled':''}>Login</button>
+          <button type='submit' className='btn btn-lg login-button'>Login</button>
           </form>
         </div>
         <div className='col-12'>
