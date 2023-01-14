@@ -19,6 +19,7 @@ const useDonations = () => {
     const getDonations = async () => {
         try{
             const response = await axiosPublic.get('/donations')
+            
             if(true === response.data.data.error){
                 throw new Error(response.data.data.message)
             }
