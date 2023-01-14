@@ -1,6 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react"
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import useLoading from "./hooks/loading"
 
 import "./index.scss"
@@ -24,17 +23,31 @@ import Header from './pages/components/Header'
 import Footer from './pages/components/Footer'
 import ProfilePage from './pages/components/Dashboard/Profile'
 import Loader from "./pages/components/Loading"
+import CollegesPage from './pages/components/Admin/College'
+import BanksPage from './pages/components/Admin/Bank'
+import RegisterCollegePage from "./pages/components/Admin/College/register"
+import EditCollegePage from "./pages/components/Admin/College/edit"
+import AdminPage from './pages/components/Admin'
+import AdminLoginPage from './pages/components/Admin/login'
+import AdminRegisterPage from './pages/components/Admin/register'
+import AdminEditPage from './pages/components/Admin/edit'
+import ProtectedAdminRoutes from './pages/components/ProtectedRoutes/admin'
+import Redirect from './pages/components/Redirect'
+import useAuth from "./hooks/auth"
 
 function App() {
-  const authUser = useSelector(state => (state.auth.user)) 
-  const [isAuthenticated, setIsAuthenticated] = useState(authUser)
+  const { userIsAuth, userIsAdmin } = useAuth()
+  const [isAdmin, setIsAdmin] = useState(userIsAdmin())
+  const [isAuth, setIsAuth] = useState(userIsAuth())
   const { loaderVisible } = useLoading()
   const [isLoading, setIsLoading] = useState(loaderVisible)
   const navigate = useNavigate()
+  const location = useLocation()
 
   useLayoutEffect(() => {
-    setIsAuthenticated(authUser)
-  },[authUser])
+    setIsAuth(userIsAuth())
+    setIsAdmin(userIsAdmin())
+  }, [location.pathname])
 
   useEffect(() => {
     setIsLoading(loaderVisible)
@@ -47,17 +60,24 @@ function App() {
   return (
     <div className="App">
       <Loader visible={ isLoading } />
+      
+      {/* Display the  top navbar if admin or user is not logged into their dashboard */}
       <Header />
+
       <div className="row app-body p-0 m-0">
+        {/* 
+          The admin has its own sidebar rendered in its page. This sidebar is rendered for casual users of the site 
+          when they are authenticated
+        */}
         {
-          isAuthenticated.donationLink && 
+          isAuth && !isAdmin && 
           <div className="col-md-3">
             <nav className="sidebar sidebar-offcanvas position-sticky" id="sidebar">
               <Sidebar />
             </nav>
           </div>
         }
-      <div className={ isAuthenticated.donationLink ? "col-md-9 page-content m-0 px-3": "col-md-12 page-content m-0 px-3"}>
+      <div className={ isAuth && !isAdmin ? "col-md-9 page-content m-0 px-3": "col-md-12 page-content m-0 px-3"}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninPage />} />
@@ -67,11 +87,64 @@ function App() {
         <Route path="/contact-us" element={<ContactUsPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/donate/:donationLink" element={<DonationLinkPage />} />
+        <Route path="/admin" element={<AdminPage />}>
+            <Route 
+              path="login" 
+              element={
+                  <AdminLoginPage />
+              } />
+            <Route 
+              path="register" 
+              element={
+                <ProtectedAdminRoutes>
+                  <AdminRegisterPage />
+                </ProtectedAdminRoutes>
+              } />
+            <Route 
+              path="edit" 
+              element={
+                <ProtectedAdminRoutes>
+                  <AdminEditPage />
+                </ProtectedAdminRoutes>
+              } />
+            <Route 
+            path="colleges" 
+            element={
+              <ProtectedRoutes>
+                <CollegesPage />
+              </ProtectedRoutes>
+            }>
+              <Route 
+                path="register" 
+                element={
+                  <ProtectedRoutes>
+                    <RegisterCollegePage />
+                  </ProtectedRoutes>
+                } />
+              <Route 
+                path="edit" 
+                element={
+                  <ProtectedRoutes>
+                    <EditCollegePage />
+                  </ProtectedRoutes>
+                } />
+            </Route>
+            <Route 
+              path="banks" 
+              element={
+                <ProtectedRoutes>
+                  <BanksPage />
+                </ProtectedRoutes>
+              } />
+        </Route>
         <Route 
           path="dashboard"
-          element={<DashboardPage />} 
-          >
-             <Route 
+          element={
+            <ProtectedRoutes>
+              <DashboardPage />
+            </ProtectedRoutes>
+          }> 
+            <Route 
               path="profile" 
               element={
                 <ProtectedRoutes>
@@ -100,6 +173,10 @@ function App() {
                 </ProtectedRoutes>
               } />
           </Route>
+          <Route
+            path="*"
+            element={<Redirect to="/" />}
+          />
       </Routes>
       </div>
       <Footer />
