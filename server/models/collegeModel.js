@@ -5,6 +5,7 @@ const collegeSchema = new Schema({
   name: {
     type: String,
     required: true,
+    unique: true
   },
   totalDonations: {
     type: Number,
@@ -20,7 +21,33 @@ const collegeSchema = new Schema({
   },
   isVerified: {
     type: Boolean,
-    default: false
+    default: true
+  },
+  contact: {
+    email: {
+      type: String,
+      default: '',
+      unique: true
+    },
+    phoneNumbers: {
+      type: [String],
+      default: []
+    }
+  },
+  accountDetails: {
+    name: {
+      type: String,
+      required: true
+    },
+    number: {
+      type: Number,
+      required: true,
+    },
+    bank: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Bank'
+    }
   }
 });
 
