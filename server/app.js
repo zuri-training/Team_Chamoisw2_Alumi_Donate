@@ -11,6 +11,7 @@ const collegeRoutes = require('./routes/collegeRoutes')
 const paymentRoutes = require('./routes/paymentRoutes')
 const donationRoutes = require('./routes/donationRoutes')
 const profileRoutes =  require('./routes/profileRoutes')
+const bankRoutes = require('./routes/bankRoutes')
 
 const app = express()
 
@@ -28,6 +29,7 @@ app.use("/api/colleges", collegeRoutes)
 app.use("/api/transaction/verify", paymentRoutes)
 app.use("/api/donations", donationRoutes)
 app.use("/api/profile", profileRoutes)
+app.use("/api/banks", bankRoutes)
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
