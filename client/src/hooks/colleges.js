@@ -1,13 +1,16 @@
 import useAxios from './../api/axios'
 import { Toast } from '../pages/components/ToastAlert'
 import { RESET_DONATION_LINK } from '../redux/actions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import useLoading from './../hooks/loading'
 
 const useColleges =  () => {
-    const { axiosPublic } = useAxios()
+    const { axiosPublic, axiosPrivate } = useAxios()
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { setLoaderVisible } = useLoading()
+    const college = useSelector(state => (state.college))
 
     const getColleges = async () => {
         try{
@@ -50,9 +53,111 @@ const useColleges =  () => {
         }
     }
 
+    const registerCollege = async (formValues) => {
+
+        try{
+            setLoaderVisible(true)
+
+            const response = await axiosPrivate.post('/colleges/register', formValues)
+
+            setLoaderVisible(false)
+            
+            Toast.fire({
+                icon: true === response.data.data.error ? "error" : "success",
+                title: response.data.data.message
+            });
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: err.message
+            });
+        }
+
+    }
+
+    const getCollegesFullDetails = async () => {
+        try{
+            const response = await axiosPrivate.get('/colleges/all/complete')
+
+            if(true === response.data.data.error){
+                return []
+            }
+
+            return response.data.data.message
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: err.message
+            });
+        }
+    }
+
+    const deleteCollege = async collegeId => {
+        try{
+            const response = await axiosPrivate.delete('/colleges/delete', { data: { collegeId } })
+
+            if(true === response.data.data.error){
+                throw new Error(response.data.data.message)
+            }
+
+            Toast.fire({
+                icon: "success",
+                title: response.data.data.message
+            })
+
+            return true
+
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: err.message
+            });
+
+            return false
+        }
+    }
+
+    const getCollegeReduxData = () => {
+        return college.collegeDetails
+    }
+
+    const updateCollege = async (formValues) => {
+        try{
+            setLoaderVisible(true)
+
+            const response = await axiosPrivate.patch('/colleges/update', formValues)
+
+            setLoaderVisible(false)
+
+            if(true === response.data.data.error){
+                throw new Error(response.data.data.message)
+            }
+
+            Toast.fire({
+                icon: "success",
+                title: response.data.data.message
+            })
+
+            return 
+        }catch(err){
+            setLoaderVisible(false)
+
+            Toast.fire({
+                icon: "error",
+                title: err.message
+            })
+            
+            return 
+        }
+    }
     return {
         getColleges,
-        getCollege
+        getCollege,
+        registerCollege,
+        getCollegesFullDetails,
+        deleteCollege,
+        getCollegeReduxData,
+        updateCollege
     }
 }
 
