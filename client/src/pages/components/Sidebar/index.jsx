@@ -2,9 +2,41 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { LOGOUT } from '../../../redux/actions'
 import { useDispatch } from 'react-redux'
+import useAuth from './../../../hooks/auth'
+import { BagPlusFill, BuildingFill, PersonBoundingBox, Bank } from 'react-bootstrap-icons'
 
-const Sidebar = () => {
-    const dashboardPages = useMemo(() => (['profile', 'donate']),[])
+const dashboardPages = [
+  {
+    title: 'Profile',
+    link: '/dashboard/profile',
+    icon: <PersonBoundingBox />,
+    className: 'profile',
+    isAdmin: false
+  },
+  {
+    title: 'Donate',
+    link: '/dashboard/donate',
+    icon: <BagPlusFill />,
+    className: 'donate',
+    isAdmin: false
+  },
+  {
+    title: 'Colleges',
+    link: '/admin/colleges',
+    icon: <BuildingFill />,
+    className: 'colleges',
+    isAdmin: true,
+  },
+  {
+    title: 'Banks',
+    link: '/admin/banks',
+    icon: <Bank />,
+    className: 'banks',
+    isAdmin: true,
+  }
+]
+
+const Sidebar = ({ isAdmin }) => {
     const location = useLocation()
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -40,18 +72,40 @@ const Sidebar = () => {
     return (
         <>
         <ul className="nav">
-          <li className="nav-item profile">
-            <Link className="nav-link" to="/dashboard/profile">
-              <i className="typcn typcn-device-desktop menu-icon"></i>
-              <span className="menu-title">Profile</span>
-            </Link>
-          </li>
-          <li className="nav-item donate">
-            <Link className="nav-link" to="/dashboard/donate">
-              <i className="typcn typcn-device-desktop menu-icon"></i>
-              <span className="menu-title">Donate</span>
-            </Link>
-          </li>
+          {
+            !isAdmin && (
+              dashboardPages.map(pageLink => {
+                if (pageLink.isAdmin) return null
+                
+                return <li className="nav-item" key={pageLink.title}>
+                  <Link className="nav-link" to={pageLink.link}>
+                    {pageLink.icon}
+                    <span className="menu-title mx-3">
+                      {pageLink.title}
+                    </span>
+                  </Link>
+                </li>
+              }
+            ))
+          }
+
+          {
+            isAdmin && (
+              dashboardPages.map(pageLink => {
+                if (!pageLink.isAdmin) return null
+
+                return <li className="nav-item" key={pageLink.title}>
+                  <Link className="nav-link" to={pageLink.link}>
+                    {pageLink.icon}
+                    <span className="menu-title mx-3">
+                      {pageLink.title}
+                    </span>
+                  </Link>
+                </li>
+              }
+            ))
+          }
+
         </ul>
         <div className="logout w-100 d-flex justify-content-center">
             <div className="w-75">

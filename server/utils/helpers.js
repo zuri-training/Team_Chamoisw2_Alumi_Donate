@@ -50,11 +50,15 @@ function handleResponse(data = {}, message = "success") {
 // Returns the values encoded in the jwt token if verification is successful
 // sample Usage verifyJwtToken(authorizationHeader)
 function verifyJwtToken(authorizationHeader = "") {
-  if(!authorizationHeader) throw createApiError("User not authorized", 400)
+  try{
+    if(!authorizationHeader) throw createApiError("User not authorized", 400)
   
-  const token = authorizationHeader.split(' ')[1]
+    const token = authorizationHeader.split(' ')[1]
 
-  return jwt.verify(token, process.env.JWT_SECRET)
+    return jwt.verify(token, process.env.JWT_SECRET)
+  }catch(error){
+    return false
+  }
 }
 
 module.exports = {

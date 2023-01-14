@@ -4,18 +4,18 @@ const { Types: { ObjectId } } = require('mongoose')
 const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const { generateToken } = require('./../utils/generateToken')
+const Admin = require('./../models/adminModel')
 
 const getUserData  = handleAsync(async (req, res) => {
     const tokenVerified = verifyJwtToken(req.headers.authorization)
 
     if(!tokenVerified){
-      throw createApiError("Invalid token", 400)
+      throw createApiError("Unauthorized access", 401)
     }
     
     // If token verified
     const userData = await User
-        .findById(ObjectId(tokenVerified.userId), 
-        { 
+        .findById(ObjectId(tokenVerified.userId),{ 
             _id: false,
             fullName: true,
             email: true,
@@ -32,7 +32,7 @@ const updateUserData = handleAsync(async (req, res) => {
     const tokenVerified = verifyJwtToken(req.headers.authorization)
 
     if(!tokenVerified){
-      throw createApiError("Invalid token", 400)
+      throw createApiError("Unauthorized access", 401)
     }
 
     const errors = validationResult(req);
@@ -79,7 +79,7 @@ const updateNewsletterSub = handleAsync(async (req, res) => {
     const tokenVerified = verifyJwtToken(req.headers.authorization)
 
     if(!tokenVerified){
-        throw createApiError("User not authorized", 400)
+        throw createApiError("User not authorized", 401)
     }
 
     const subscribed = await User.findByIdAndUpdate(tokenVerified.userId, { $set : { newsletterSub: true } }, { new : true }).exec()
@@ -91,8 +91,71 @@ const updateNewsletterSub = handleAsync(async (req, res) => {
     }
 })
 
+const getAdmins = handleAsync(async (req, res) => {
+    const tokenVerified = verifyJwtToken(req.headers.authorization)
+    
+    if(!tokenVerified){
+        throw createApiError("User not authorized", 401)
+    }
+
+    const admins = await Admin.find({}).exec()
+
+    res.status(200).json(handleResponse({message: admins ? admins : [] }))
+})
+
+const deleteAdmin = handleAsync(async(req, res) => {
+    const tokenVerified = verifyJwtToken(req.headers.authorization)
+    
+    if(!tokenVerified){
+        throw createApiError("User not authorized", 401)
+    }
+
+    const adminDeleted = await Admin.findByIdAndDelete(req.body.adminId).exec()
+
+    if(!adminDeleted) throw createApiError("Some errors were encountered", 500)
+
+    res.status(200).json(handleResponse({ message: "Admin successfully deleted" }))
+})
+
+const updateAdmin = handleAsync(async(req, res) => {
+    const tokenVerified = verifyJwtToken(req.headers.authorization)
+
+    if(!tokenVerified){
+        throw createApiError("User not authorized", 401)
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        throw createApiError(errors.array().map(errObj => (errObj.msg)).join('<br />'), 400)
+    }
+
+    const { password } = req.body
+
+    if(password === "" || password == 'undefined'){ 
+        delete req.body.password
+        delete req.body.confirmPassword
+    }else{
+        const newHashedPassword = bcrypt.hashSync(password, 10)
+        req.body.password = newHashedPassword
+    }
+
+    try{
+        const adminUpdated = await Admin.findByIdAndUpdate(req.body._id, req.body).exec()
+
+        if(!adminUpdated) throw createApiError("Some errors were encountered", 500)
+    
+        res.status(200).json(handleResponse({message: "Admin successfully updated"}))
+    }catch(err){
+        throw createApiError("Some errors were encountered", 500)
+    }
+})
+
 module.exports = {
     getUserData,
     updateUserData,
-    updateNewsletterSub
+    updateNewsletterSub,
+    getAdmins,
+    deleteAdmin,
+    updateAdmin
 }

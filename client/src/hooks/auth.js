@@ -1,20 +1,34 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import useAxios from '../api/axios';
-import { Toast } from './../pages/components/ToastAlert';
+import { useState, useLayoutEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useAxios from '../api/axios'
+import { Toast } from './../pages/components/ToastAlert'
 import { useDispatch, useSelector } from 'react-redux'
-import { SET_DONATION_LINK, SET_LOADER_VISIBLE, SIGN_IN } from './../redux/actions'
-import useDonations from './donations';
+import { SET_DONATION_LINK, SET_LOADER_VISIBLE, SIGN_IN, SIGN_IN_ADMIN, LOGOUT } from './../redux/actions'
+import useDonations from './donations'
+import useLoading from './loading'
 
 const useAuth = () => {
     const navigate = useNavigate()
-    const { axiosPublic } = useAxios()
+    const { axiosPublic, axiosPrivate } = useAxios()
     const dispatch = useDispatch()
-    const auth = useSelector(state => (state.auth))
-    const [user] = useState(auth.user)
+    const authRedux = useSelector(state => (state.auth))
+    const [user, setUser] = useState(authRedux.user)
     const { getDonationReduxData } = useDonations()
-  
-    const userIsAuth  = () => (Object.keys(user).length > 0)
+    const { setLoaderVisible } = useLoading()
+    const profileReduxData = useSelector(state => (state.profile))
+    const [adminProfile, setAdminProfile] = useState(profileReduxData.admin)
+
+    useLayoutEffect(() => {
+        setUser(authRedux.user)
+    },[authRedux.user])
+
+    useLayoutEffect(() => {
+        setAdminProfile(profileReduxData.admin)
+    }, [profileReduxData.admin])
+
+    const userIsAuth = () => {
+        return Boolean(user.token)
+    }
 
     const getUserData = () => (user)
 
@@ -28,11 +42,23 @@ const useAuth = () => {
 
         return formValid(formValues)
     }
+
+    const tokenExpired = (statusCode) => {
+        if(statusCode === 401){
+            dispatch({
+                type: LOGOUT
+            })
+
+            return true
+        }
+
+        return false
+    }
  
     const displayErrorMessages = (error) => {
             Toast.fire({
                 icon: "error",
-                title: error.data ? error.data.message : error.message
+                title: error.message
             });
     }
 
@@ -83,24 +109,22 @@ const useAuth = () => {
         if(!formValid(formValues)) return
 
         // Show loader
-        dispatch({ type: SET_LOADER_VISIBLE, payload: true })
+        setLoaderVisible(true)
 
         try{
             const response = await axiosPublic.post("/auth/login", formValues);
-            const message = {title: response.data.data.message};
             
+            setLoaderVisible(false)
+
             // This implies the login was successful
             if(!response.data.data.error && response.data.data.statusCode === 200){
                 Toast.fire({
                     icon: "success",
-                    ...message
+                    title: response.data.data.message
                 });
                 
                 //Save authenticated user's data
                 dispatch({ type: SIGN_IN, payload: response.data.data })
-
-                // Hide loader
-                dispatch({ type: SET_LOADER_VISIBLE, payload: false })
 
                 // This donation link is being set by an authenticated user
                 dispatch({ type: SET_DONATION_LINK, payload: response.data.data.donationLink})
@@ -110,27 +134,110 @@ const useAuth = () => {
                     return
                 } 
             
-            }else{
-                // Hide loader
-                dispatch({ type: SET_LOADER_VISIBLE, payload: false })
-                
-                Toast.fire({
-                    icon: "error",
-                    title: "One or more login details is incorrect"
-                });
+            }else{   
+                throw new Error(response.data.data.message)             
             }
             return
         }catch(err){
+            setLoaderVisible(false)
+
             displayErrorMessages(err)
+            
             return
         }
+    }
+
+    const adminExists = async () => {
+        try{
+            const response = await axiosPublic.post("/auth/admin/exists")
+
+            return response.data.data.message
+        }catch(err){
+            return false
+        }
+    }
+
+    const registerAdmin = async (formValues) => {
+        // Show loader
+        setLoaderVisible(true)
+
+        try{
+            let response = null
+
+            if(await adminExists()){
+                response = await axiosPrivate.post("auth/admin/register", formValues);
+            }else{
+                response = await axiosPublic.post("auth/admin/register", formValues);
+            }
+            
+            setLoaderVisible(false)
+
+            if(true === response.data.data.error){
+                throw new Error(response.data.data.message)
+            }
+
+            Toast.fire({
+                icon: "success",
+                title: "Admin Registered Successfully",
+            })
+
+        }catch(err){
+            setLoaderVisible(false)
+
+            displayErrorMessages(err)
+            
+            return
+        }
+    }
+
+    const loginAdmin = async (formValues) => {
+        setLoaderVisible(true)
+
+        try{
+            const response = await axiosPublic.post("auth/admin/login", formValues);
+
+            setLoaderVisible(false)
+
+            if(true === response.data.data.error){
+                throw new Error(response.data.data.message)
+            }
+
+            dispatch({
+                type: SIGN_IN_ADMIN,
+                payload: String(response.data.data.message)
+            })
+
+            return true
+        }catch(err){
+            setLoaderVisible(false)
+
+            displayErrorMessages(err)
+            
+            return false
+        }
+    }
+
+    const userIsAdmin = () => {
+        if(!userIsAuth()) return false
+
+        return user.isAdmin
+    }
+
+    const getAdminReduxData = () => {
+        return adminProfile
     }
 
     return {
         signupUser,
         loginUser,
         userIsAuth,
-        getUserData
+        getUserData,
+        loginAdmin,
+        registerAdmin,
+        userIsAdmin,
+        adminExists,
+        getAdminReduxData,
+        tokenExpired
     }
 }
 

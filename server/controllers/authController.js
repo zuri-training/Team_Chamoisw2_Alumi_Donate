@@ -7,6 +7,7 @@ const { generateToken } = require("../utils/generateToken")
 const { sendChangePasswordEmail } = require("../utils/email")
 const jwt = require('jsonwebtoken')
 const { handleAsync, handleResponse, createApiError, verifyJwtToken } = require('./../utils/helpers')
+const Admin = require('../models/adminModel')
 
 
 //function to check if user already exists
@@ -93,7 +94,7 @@ const userLogin = handleAsync( async (req, res, next) => {
           throw createApiError("Please provide email and password", 400)
         }
 
-        let userFound = await User.findOne({ email })
+        let userFound = await User.findOne({ email }).exec()
 
         if (!userFound) {
           throw createApiError("A user for this email could not be found!", 400)
@@ -105,7 +106,7 @@ const userLogin = handleAsync( async (req, res, next) => {
           throw createApiError("Invalid credentials!", 400 )
         }
 
-        const { accessToken } = await generateToken(userFound)
+        const accessToken = await generateToken(userFound)
 
         userFound = await userFound.populate('collegeId')
         
@@ -218,10 +219,84 @@ const verifyJwt = handleAsync(async (req, res) => {
     res.status(200).json(handleResponse({message: verificationResponse}))
 })
 
+const adminLogin = handleAsync(async (req, res) => {
+    const { email, password } = req.body   
+
+    let adminFound = await Admin.findOne({ email }).exec()
+
+    if (!adminFound) {
+      throw createApiError("Incorrect login credentials", 400)
+    }
+    
+    const passwordMatch = await bcrypt.compare(password, adminFound._doc.password)
+
+    if (!passwordMatch) {
+      throw createApiError("Incorrect login credentials", 400)
+    }
+
+    delete adminFound._doc.password
+
+    const accessToken = await generateToken(adminFound._doc)
+
+    if(!accessToken) throw createApiError("Some errors were encountered", 500)
+
+    res.status(200).json(handleResponse({message: accessToken}))
+})
+
+const adminSignup = handleAsync(async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+      throw createApiError(errors.array().map(errObj => ("&bull; " + errObj.msg)).join('<br /><br />'), 422)
+  }
+
+  const { email, password, fullName, phoneNumber } = req.body
+
+  // Check if email already exists for a registered admin
+  const adminFound = await Admin.findOne({ email }).exec()
+
+  if (adminFound) {
+    throw createApiError("Email already exists", 400)
+  }
+
+  // Hash the password  
+  bcrypt.hash(password, 10, async function (err, hash) {
+    if (err) {
+      throw createApiError("Account could not be created", 400)
+    }
+
+    const admin = await new Admin({
+      email,
+      password: hash,
+      fullName,
+      phoneNumber
+    })
+    .save()
+
+    delete admin.password
+
+    console.log(admin)
+
+    res.status(201).json(handleResponse({
+      message: "Admin registered successfully",
+    }))
+  })
+
+})
+
+const adminExists = handleAsync(async (req, res) => {
+  const adminFound = await Admin.findOne({}).exec()
+
+  return res.status(200).json(handleResponse({message: adminFound ? true: false}))
+})
+
 module.exports = {
     userSignup,
     userLogin,
     forgotPassword,
     changePassword,
-    verifyJwt
+    verifyJwt,
+    adminLogin,
+    adminSignup,
+    adminExists
 }

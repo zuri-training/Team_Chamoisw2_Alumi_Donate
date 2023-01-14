@@ -1,18 +1,17 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Link, useLocation } from 'react-router-dom'
+import useAuth from "../../../hooks/auth";
 import './../../styles/navbar.scss'
-import { useSelector } from 'react-redux'
 
 function Header() {
-  const authUser = useSelector(state => (state.auth.user)) 
-  const [isAuthenticated, setIsAuthenticated] = useState(authUser)
-
+  const { userIsAuth } = useAuth()
+  const [isAuthenticated, setIsAuthenticated] = useState(userIsAuth())
   const location = useLocation()  
   const headerLinks = useMemo(() => (['donations', 'about-us', 'faq', 'contact-us']), [])
-  
-  useLayoutEffect(() => {
-    setIsAuthenticated(authUser)
-  },[authUser])
+
+  useEffect(() => {
+    setIsAuthenticated(userIsAuth())
+  },[userIsAuth])
 
   useEffect(() => {
     if( !headerLinks.includes(location.pathname.substring(1).trim()) )return
@@ -34,34 +33,35 @@ function Header() {
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse w-100" id="navbarNavAltMarkup">
-      <ul className="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center align-items-center w-100">
-          <li className="nav-item">
-            <Link className="nav-link mx-3 donations" aria-current="page" to="/donations">Donations</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link mx-3 about-us" aria-current="page" to="/about-us">About Us</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link mx-3 faq" aria-current="page" to="/faq">FAQ</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link mx-3 contact-us" aria-current="page" to="/contact-us">Contact Us</Link>
-          </li>
-          { 
-              !isAuthenticated.donationLink && <>
-              <li className="nav-item">
-                <Link to="/login" className="nav-link mx-1">
-                  <button className="signin" type="button">Sign-in</button>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/signup" className="nav-link mx-1">
-                  <button className="signup" type="button">Sign-up</button>
-                </Link>
-              </li>
-            </>
-          }
+      { 
+        !isAuthenticated && 
+        <ul className="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center align-items-center w-100">
+            <li className="nav-item">
+              <Link className="nav-link mx-3 donations" aria-current="page" to="/donations">Donations</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link mx-3 about-us" aria-current="page" to="/about-us">About Us</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link mx-3 faq" aria-current="page" to="/faq">FAQ</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link mx-3 contact-us" aria-current="page" to="/contact-us">Contact Us</Link>
+            </li>
+            {/* Sign-in and Signup buttons*/}
+            <li className="nav-item">
+              <Link to="/login" className="nav-link mx-1">
+                <button className="signin" type="button">Sign-in</button>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/signup" className="nav-link mx-1">
+                <button className="signup" type="button">Sign-up</button>
+              </Link>
+            </li>
+            
         </ul>
+        }
       </div>
     </div>
     </nav>

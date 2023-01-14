@@ -1,7 +1,9 @@
-import { SIGN_IN, SIGN_UP, LOGOUT, UPDATE_TOKEN } from "../actions";
+import { SIGN_IN, SIGN_UP, LOGOUT, UPDATE_TOKEN, SIGN_IN_ADMIN } from "../actions";
 
 const initialState = {
-    user:{},
+    user:{
+        isAdmin: false,
+    },
 }
 
 const authReducer = (state= initialState, action) => {
@@ -9,7 +11,8 @@ const authReducer = (state= initialState, action) => {
         case SIGN_UP:
         case SIGN_IN:
             const newState = {
-               user: action.payload
+               user: action.payload,
+               isAdmin: false
             }
         return newState;
         case UPDATE_TOKEN:
@@ -17,6 +20,13 @@ const authReducer = (state= initialState, action) => {
                 user:{ 
                     ...state.user,
                     token: action.payload
+                }
+            }
+        case SIGN_IN_ADMIN:
+            return {
+                user:{ 
+                   token: action.payload,
+                   isAdmin: true
                 }
             }
         case LOGOUT:

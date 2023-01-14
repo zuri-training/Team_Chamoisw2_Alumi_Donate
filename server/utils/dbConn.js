@@ -9,6 +9,7 @@ const connectDB = () => {
     mongoose.connect(process.env.MONGODB_URL, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
+      autoIndex: true
     });
   } catch (err) {
     console.log(err);

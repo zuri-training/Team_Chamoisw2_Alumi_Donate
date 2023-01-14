@@ -8,8 +8,6 @@ const getDonations = handleAsync(async(req, res) => {
     .populate({path: 'collegeId', select: ['name', 'location']})
     .exec()
 
-    if(!donations) throw createApiError("Some errors were encountered, Please try again later", 500)
-
     return res.status(200).json(handleResponse({ message: donations }))
 })
 
