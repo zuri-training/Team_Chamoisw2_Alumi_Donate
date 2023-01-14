@@ -5,14 +5,20 @@ const {
     userLogin, 
     forgotPassword,
     changePassword,
-    verifyJwt
+    verifyJwt,
+    adminSignup,
+    adminLogin,
+    adminExists
 } = require("../controllers/authController")
-const validateSignUp = require("../middlewares/authValidators")
+const { validateSignUp, validateAdminSignup } = require("../middlewares/authValidators")
   
 router.post("/signup", validateSignUp, userSignup)
 router.post("/login", userLogin)
 router.post("/forgotpassword", forgotPassword)
 router.post("/changepassword/:token", changePassword);
 router.get("/token/verify", verifyJwt)
+router.post("/admin/register", validateAdminSignup, adminSignup)
+router.post("/admin/login", adminLogin)
+router.post("/admin/exists", adminExists)
 
 module.exports = router
