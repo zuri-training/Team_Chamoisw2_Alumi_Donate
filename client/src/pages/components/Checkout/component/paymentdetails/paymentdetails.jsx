@@ -3,7 +3,6 @@ import PaystackHook from '../../../Paystack';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import { NumericKeyboard } from 'react-numeric-keyboard';
-import { useSelector } from 'react-redux'
 import useAuth from "../../../../../hooks/auth";
 import useDonations from "../../../../../hooks/donations";
 
