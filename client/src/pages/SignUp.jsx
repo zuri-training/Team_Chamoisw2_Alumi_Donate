@@ -26,6 +26,7 @@ function SignUp() {
   const [formProcessing, setFormProcessing] = useState(false)
   const [termsAgreed, setTermsAgreed] = useState(false)
   const dispatch = useDispatch()
+  const [donationLinkActive, setDonationLinkActive] = useState(false)
 
   useLayoutEffect(() => {
     const yearsArr = []
@@ -43,6 +44,7 @@ function SignUp() {
           const collegeFound = await getCollege( getDonationReduxData().donationLink )
           
           if(collegeFound.length === 1){
+            setDonationLinkActive(true)
             setColleges(collegeFound)
             setFormValues({ ...formValues, collegeId: collegeFound[0]._id })  
           }
@@ -168,18 +170,18 @@ function SignUp() {
         value={formValues.collegeId}
         onChange={handleChange} 
         className="form-control"
-        disabled={ colleges.length === 1 ? 'disabled': '' }>
+        disabled={ colleges.length === 1 && donationLinkActive ? 'disabled': '' }>
         {/* 
           This college option is loaded if the signup page is accessed via a donation link
           (i.e The college donation link is same as the donation link used to access the website) 
         */}
         {
-          colleges.length === 1 
+          colleges.length === 1 && donationLinkActive
           && <option value={colleges[0]._id} key={colleges[0]._id}>{colleges[0].name} ({colleges[0].location})</option>
         }
-        { colleges.length > 1  && <option>Choose your Alma Mater</option> }
+        { colleges.length >= 1 && !donationLinkActive  && <option>Choose your Alma Mater</option> }
         {
-          colleges.length > 1 && colleges.map(college => (<option value={college._id} key={college._id}>{college.name} ({college.location})</option>))
+          colleges.length >= 1 && !donationLinkActive && colleges.map(college => (<option value={college._id} key={college._id}>{college.name} ({college.location})</option>))
         }
       </select>
       <select 
