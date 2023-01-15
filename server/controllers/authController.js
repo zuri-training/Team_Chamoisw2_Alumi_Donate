@@ -213,6 +213,8 @@ const changePassword = handleAsync( async (req, res) => {
 
 const verifyJwt = handleAsync(async (req, res) => {
     const { authorization } = req.headers
+    
+    if(authorization === 'Bearer undefined') throw createApiError("User not authorized", 400)
 
     const verificationResponse = verifyJwtToken(authorization)
 
