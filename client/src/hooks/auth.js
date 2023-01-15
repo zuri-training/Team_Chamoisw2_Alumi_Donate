@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAxios from '../api/axios'
 import { Toast } from './../pages/components/ToastAlert'
@@ -12,22 +12,14 @@ const useAuth = () => {
     const { axiosPublic, axiosPrivate } = useAxios()
     const dispatch = useDispatch()
     const authRedux = useSelector(state => (state.auth))
-    const [user, setUser] = useState(authRedux.user)
+    const user = useMemo(() => (authRedux.user), [authRedux.user])
     const { getDonationReduxData } = useDonations()
     const { setLoaderVisible } = useLoading()
     const profileReduxData = useSelector(state => (state.profile))
-    const [adminProfile, setAdminProfile] = useState(profileReduxData.admin)
-
-    useLayoutEffect(() => {
-        setUser(authRedux.user)
-    },[authRedux.user])
-
-    useLayoutEffect(() => {
-        setAdminProfile(profileReduxData.admin)
-    }, [profileReduxData.admin])
+    const adminProfile = useMemo(() => (profileReduxData.admin), [profileReduxData.admin])
 
     const userIsAuth = () => {
-        return Boolean(user.token)
+        return user && (typeof user.token !== "undefined")
     }
 
     const getUserData = () => (user)

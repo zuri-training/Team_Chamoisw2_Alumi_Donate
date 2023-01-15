@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useSelector } from 'react-redux'
+import { useMemo } from "react";
 
 const useAxios = () => {
   const baseURL = process.env.REACT_APP_SERVER_URL
-  const { user } = useSelector(state => (state.auth))
+  const auth = useSelector(state => (state.auth))
+  const user = useMemo(() => (auth.user),[auth.user])
   
   const axiosPublic = axios.create({
     baseURL
