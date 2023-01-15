@@ -1,4 +1,4 @@
-import React,{ useState, useLayoutEffect } from 'react';
+import React,{ useState, useEffect, useMemo } from 'react';
 import useAuth from './../hooks/auth'
 import LoginImage from './../assets/images/Secure-login.svg'
 import './styles/signin.scss'
@@ -8,13 +8,14 @@ import { Link, useNavigate } from 'react-router-dom'
 const SignIn = () => {
   const [formValues, setFormValues] = useState({ email: '', password: ''});
   const { loginUser, userIsAuth }  = useAuth()
+  const isAuth = useMemo(() => (userIsAuth()), [userIsAuth])
   const navigate = useNavigate() 
 
-  useLayoutEffect(() => {
-    if(userIsAuth()){
+  useEffect(() => {
+    if(isAuth){
       navigate('/dashboard')
     }
-  },[navigate])
+  },[navigate, isAuth])
 
   const handleChange = e => {
     setFormValues({
