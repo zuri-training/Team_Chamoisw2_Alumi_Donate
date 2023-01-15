@@ -57,7 +57,7 @@ function verifyJwtToken(authorizationHeader = "") {
 
     return jwt.verify(token, process.env.JWT_SECRET)
   }catch(error){
-    return false
+    throw createApiError("User not authorized", 400)
   }
 }
 
