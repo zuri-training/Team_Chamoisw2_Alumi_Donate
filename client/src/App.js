@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react"
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from "react"
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import useLoading from "./hooks/loading"
 
 import "./index.scss"
@@ -37,17 +37,16 @@ import useAuth from "./hooks/auth"
 
 function App() {
   const { userIsAuth, userIsAdmin } = useAuth()
-  const [isAdmin, setIsAdmin] = useState(userIsAdmin())
-  const [isAuth, setIsAuth] = useState(userIsAuth())
+  const isAdmin = useMemo(() => (userIsAdmin()), [userIsAdmin])
+  const isAuth = useMemo(() => (userIsAuth()), [userIsAuth])
   const { loaderVisible } = useLoading()
   const [isLoading, setIsLoading] = useState(loaderVisible)
   const navigate = useNavigate()
-  const location = useLocation()
 
-  useLayoutEffect(() => {
-    setIsAuth(userIsAuth())
-    setIsAdmin(userIsAdmin())
-  }, [location.pathname])
+  //If user is logged in, redirect to dashboard
+  useEffect(() => {
+    if(isAuth) navigate('/dashboard')
+  }, [isAuth, navigate])
 
   useEffect(() => {
     setIsLoading(loaderVisible)
@@ -56,6 +55,7 @@ function App() {
   useEffect(() => {
     window.scrollTo(0,0)
   }, [navigate])
+
 
   return (
     <div className="App">
