@@ -45,7 +45,7 @@ function App() {
 
   //If user is logged in, redirect to dashboard
   useEffect(() => {
-    if(isAuth) navigate('/dashboard')
+    if(isAuth && !isAdmin) navigate('/dashboard')
   }, [isAuth, navigate])
 
   useEffect(() => {
