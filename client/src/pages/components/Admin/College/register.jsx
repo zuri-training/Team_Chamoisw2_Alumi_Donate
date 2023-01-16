@@ -156,7 +156,7 @@ const RegisterCollegePage = () => {
 
                         <label htmlFor="accountNumber" className="form-label"><strong>Account Number</strong></label>
                         <input
-                            type="number"
+                            type="text"
                             minLength={10}
                             maxLength={10}
                             className='form-control mb-3 w-100'
@@ -167,7 +167,7 @@ const RegisterCollegePage = () => {
                             autoComplete="off"
                             onBlur={() => {formValidator.showMessageFor('accountNumber')}}
                         />
-                        {formValidator.message('accountNumber', formValues.accountNumber, 'required|numeric|min:10|max:10')}
+                        {formValidator.message('accountNumber', formValues.accountNumber, 'required|string|min:10|max:10')}
 
                         <label htmlFor="bankCode" className="form-label"><strong>Bank</strong></label>
                         <select
