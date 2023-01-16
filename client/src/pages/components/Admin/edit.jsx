@@ -48,7 +48,7 @@ const EditAdminPage = () => {
         setFormValues(prevValues => ({...prevValues, fullName: `${prevValues.fullName} `}))
 
         // Simulate removal of empty character
-        setFormValues(prevValues => ({...prevValues, fullName: `${prevValues.fullName}`}))
+        setFormValues(prevValues => ({...prevValues, fullName: `${prevValues.fullName.trim()}`}))
     }
 
     const handleEditChange = (e) => {
