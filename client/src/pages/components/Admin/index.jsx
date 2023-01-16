@@ -12,23 +12,26 @@ const AdminPage = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const location = useLocation()
-    const [admins, setAdmins] = useState([])
     const { deleteAdmin, getAdmins } = useUserProfile()
     const { userIsAdmin } = useAuth()
+    const [admins, setAdmins] = useState([])
     const adminHomeRoute = useMemo(() => (location.pathname === '/admin'), [location.pathname])
-    const isAdmin = useMemo(() => (userIsAdmin()), [userIsAdmin])
-
+    const isAdmin = useMemo(() => (userIsAdmin()), [location.pathname])
+    const adminsList = useMemo(() => (getAdmins()),[location.pathname])
 
     useEffect(() => {
         if(!isAdmin) {
             navigate("/admin/login")
-        }else if(isAdmin && adminHomeRoute){
-            (async () => {
-                const adminsList = await getAdmins()
-                setAdmins(prevAdmins => (adminsList))
-            })()
         }
-    },[isAdmin, adminHomeRoute])
+    },[isAdmin])
+
+    useEffect(() => {
+        
+        adminsList.then((res) => {
+            setAdmins(res)
+        })
+        
+    }, [adminsList])
 
     const handleAdminEdit = adminDetails => {
         dispatch({
@@ -55,7 +58,7 @@ const AdminPage = () => {
             <div className="row">
             {/* Admin sidebar */}
             {
-                userIsAdmin() && 
+                isAdmin && 
                 <div className="col-lg-2 col-md-3 col-sm-12 d-flex justify-content-center">
                     <nav className="sidebar sidebar-offcanvas position-sticky" id="sidebar">
                     <Sidebar isAdmin={true} />
