@@ -18,9 +18,9 @@ const EditCollegePage = () => {
             name,
             location,
             email: contact && contact.email ? contact.email : '',
-            phoneNumbers: contact && contact.phoneNumbers ? contact.phoneNumbers.join('/n') : '',
+            phoneNumbers: contact && contact.phoneNumbers ? contact.phoneNumbers.join('\n') : '',
             accountName: accountDetails && accountDetails.name ? accountDetails.name : '',
-            accountNumber: accountDetails && accountDetails.number ? accountDetails.number : '',
+            accountNumber: accountDetails && accountDetails.number ? String(accountDetails.number) : '',
             bankId: accountDetails && accountDetails.bank ? accountDetails.bank : ''
         })
     }, [])
@@ -168,7 +168,7 @@ const EditCollegePage = () => {
 
                 <label htmlFor="accountNumber" className="form-label"><strong>Account Number</strong></label>
                 <input
-                    type="number"
+                    type="text"
                     minLength={10}
                     maxLength={10}
                     className='form-control mb-3 w-100 acc-number'
