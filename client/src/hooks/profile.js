@@ -119,6 +119,7 @@ const useUserProfile = () => {
 
             if(true === response.data.data.error){
                 // Unauthorized access, Admin is logged out automatically
+                // in the token expired function
                 if(tokenExpired(response.data.data.statusCode)){                    
                     navigate('/admin/login')
                     return
@@ -130,6 +131,8 @@ const useUserProfile = () => {
             return response.data.data.message
         }catch(err){
             displayErrorMessages(err)
+
+            return []
         }
     }
 
