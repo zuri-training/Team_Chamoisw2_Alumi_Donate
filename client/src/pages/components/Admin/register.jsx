@@ -75,7 +75,7 @@ const RegisterAdminPage = () => {
     }
    
     return (
-        <section className="col-md-9">
+        <section className="col-md-9 col-sm-12">
         <div className="row justify-content-md-center mb-5">
         
             {
