@@ -31,6 +31,8 @@ import AdminPage from './pages/components/Admin'
 import AdminLoginPage from './pages/components/Admin/login'
 import AdminRegisterPage from './pages/components/Admin/register'
 import AdminEditPage from './pages/components/Admin/edit'
+import RegisterBankPage from "./pages/components/Admin/Bank/register"
+import EditBankPage from "./pages/components/Admin/Bank/edit"
 import ProtectedAdminRoutes from './pages/components/ProtectedRoutes/admin'
 import Redirect from './pages/components/Redirect'
 import useAuth from "./hooks/auth"
@@ -42,11 +44,6 @@ function App() {
   const { loaderVisible } = useLoading()
   const [isLoading, setIsLoading] = useState(loaderVisible)
   const navigate = useNavigate()
-
-  //If user is logged in, redirect to dashboard
-  useEffect(() => {
-    if(isAuth) navigate('/dashboard')
-  }, [isAuth, navigate])
 
   useEffect(() => {
     setIsLoading(loaderVisible)
@@ -61,7 +58,10 @@ function App() {
     <div className="App">
       <Loader visible={ isLoading } />
       
-      {/* Display the  top navbar if admin or user is not logged into their dashboard */}
+      {/* 
+        Display the  top navbar if admin or user is not logged into their dashboard
+        This is being handled internally. (inside the component)
+      */}
       <Header />
 
       <div className="row app-body p-0 m-0">
@@ -77,6 +77,7 @@ function App() {
             </nav>
           </div>
         }
+
       <div className={ isAuth && !isAdmin ? "col-md-9 page-content m-0 px-3": "col-md-12 page-content m-0 px-3"}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -108,34 +109,49 @@ function App() {
                 </ProtectedAdminRoutes>
               } />
             <Route 
-            path="colleges" 
-            element={
-              <ProtectedRoutes>
-                <CollegesPage />
-              </ProtectedRoutes>
-            }>
+              path="colleges" 
+              element={
+                <ProtectedAdminRoutes>
+                  <CollegesPage />
+                </ProtectedAdminRoutes>
+              }>
               <Route 
                 path="register" 
                 element={
-                  <ProtectedRoutes>
+                  <ProtectedAdminRoutes>
                     <RegisterCollegePage />
-                  </ProtectedRoutes>
+                  </ProtectedAdminRoutes>
                 } />
               <Route 
                 path="edit" 
                 element={
-                  <ProtectedRoutes>
+                  <ProtectedAdminRoutes>
                     <EditCollegePage />
-                  </ProtectedRoutes>
+                  </ProtectedAdminRoutes>
                 } />
             </Route>
             <Route 
               path="banks" 
               element={
-                <ProtectedRoutes>
+                <ProtectedAdminRoutes>
                   <BanksPage />
-                </ProtectedRoutes>
-              } />
+                </ProtectedAdminRoutes>
+              }>
+                <Route 
+                path="register" 
+                element={
+                  <ProtectedAdminRoutes>
+                    <RegisterBankPage />
+                  </ProtectedAdminRoutes>
+                } />
+              <Route 
+                path="edit" 
+                element={
+                  <ProtectedAdminRoutes>
+                    <EditBankPage />
+                  </ProtectedAdminRoutes>
+                } />
+            </Route>
         </Route>
         <Route 
           path="dashboard"

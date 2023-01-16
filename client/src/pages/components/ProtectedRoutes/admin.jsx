@@ -17,7 +17,7 @@ const ProtectedAdminRoutes = ({children}) => {
       (async () => {
         try{
           const response = await axiosPrivate.get('/auth/token/verify')
-          
+      
           // Token invalid or expired
           if(true === response.data.data.error){
             dispatch({type: LOGOUT})

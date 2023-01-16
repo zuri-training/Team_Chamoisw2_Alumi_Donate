@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { LOGOUT } from '../../../redux/actions'
 import { useDispatch } from 'react-redux'
 import useAuth from './../../../hooks/auth'
-import { BagPlusFill, BuildingFill, PersonBoundingBox, Bank } from 'react-bootstrap-icons'
+import { BagPlusFill, BuildingFill, PersonBoundingBox, Bank, PeopleFill } from 'react-bootstrap-icons'
 
 const dashboardPages = [
   {
@@ -32,6 +32,13 @@ const dashboardPages = [
     link: '/admin/banks',
     icon: <Bank />,
     className: 'banks',
+    isAdmin: true,
+  },
+  {
+    title: 'Admins',
+    link: '/admin',
+    icon: <PeopleFill />,
+    className: 'admins',
     isAdmin: true,
   }
 ]

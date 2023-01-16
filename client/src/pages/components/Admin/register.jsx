@@ -75,7 +75,8 @@ const RegisterAdminPage = () => {
     }
    
     return (
-        <section className="row justify-content-md-center mb-5">
+        <section className="col-md-9 col-sm-12">
+        <div className="row justify-content-md-center mb-5">
         
             {
                 // This condition checks to see if an admin has been registered
@@ -153,7 +154,7 @@ const RegisterAdminPage = () => {
                     </form>
                 </div>
             }
-            
+            </div>
         </section>
     )
 }

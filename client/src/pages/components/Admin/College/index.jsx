@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useColleges from "../../../../hooks/colleges";
 import { PencilSquare, PlusSquareDotted, TrashFill } from "react-bootstrap-icons";
-import EditCollegeForm from "./edit";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { EDIT_COLLEGE_DETAILS } from "../../../../redux/actions";
 import { useDispatch } from "react-redux";
@@ -12,13 +11,16 @@ const CollegesPage = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const location = useLocation()
+    const isCollegeHomeRoute = useMemo(() => (location.pathname === '/admin/colleges'), [location.pathname])
 
     // Fetch all registered colleges
     useEffect(() => {
-        (async () => {
-            setColleges(await getCollegesFullDetails())
-        })()
-    }, [location.pathname])
+        if(isCollegeHomeRoute){
+            (async () => {
+                setColleges(await getCollegesFullDetails())
+            })()
+        }
+    }, [isCollegeHomeRoute])
 
     const handleCollegeEdit = collegeDetails => {
         dispatch({
@@ -26,7 +28,7 @@ const CollegesPage = () => {
             payload: collegeDetails
         })
 
-        navigate('/dashboard/colleges/edit')
+        navigate('/admin/colleges/edit')
     }
 
     const handleCollegeDelete = async collegeId => {
@@ -40,14 +42,10 @@ const CollegesPage = () => {
         }
     }
 
-    const isCollegeHomeRoute = () => {
-        return location.pathname === '/admin/colleges'
-    }
-
     return (
         <section className="col-md-9 mb-5">
             {/* Button to add new college and a tabular list of registered colleges */}
-            { colleges.length >= 0 && isCollegeHomeRoute()
+            { colleges.length >= 0 && isCollegeHomeRoute
               && <>
                 <div className="col-12 mb-5 d-flex justify-content-md-end justify-content-sm-center">
                     <button type="button" className="btn btn-medium btn-success" onClick={() => navigate('/admin/colleges/register')}><PlusSquareDotted className="text-white mx-3" /> Register College (Institution)</button>
@@ -55,7 +53,7 @@ const CollegesPage = () => {
 
                 <br/>
                     {/* Table showing list of colleges */}
-                    <div className="col-12">
+                    <div className="col-12 table-responsive">
                         <table className="table table-dark table-striped">
                             <thead>
                                 <tr>

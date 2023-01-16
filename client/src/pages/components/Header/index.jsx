@@ -1,17 +1,14 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Link, useLocation } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from "../../../hooks/auth";
 import './../../styles/navbar.scss'
 
 function Header() {
   const { userIsAuth } = useAuth()
-  const [isAuthenticated, setIsAuthenticated] = useState(userIsAuth())
-  const location = useLocation()  
+  const isAuthenticated = useMemo(() => (userIsAuth()), [userIsAuth])
+  const navigate = useNavigate()  
+  const location = useLocation()
   const headerLinks = useMemo(() => (['donations', 'about-us', 'faq', 'contact-us']), [])
-
-  useEffect(() => {
-    setIsAuthenticated(userIsAuth())
-  },[userIsAuth])
 
   useEffect(() => {
     if( !headerLinks.includes(location.pathname.substring(1).trim()) )return
@@ -23,7 +20,7 @@ function Header() {
 
     //Add the active className to the presently active nav-link
     document.querySelector(`.${location.pathname.substring(1).trim()}`).classList.add('active')
-  }, [location.pathname, headerLinks])
+  }, [navigate])
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
