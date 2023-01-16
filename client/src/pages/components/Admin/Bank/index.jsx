@@ -1,98 +1,106 @@
-import { useState, useMemo } from "react"
-import useBanks from "../../../../hooks/banks"
-import SimpleReactValidator from "simple-react-validator"
+import { useState, useEffect,  useMemo } from "react";
+import { PencilSquare, PlusSquareDotted, TrashFill } from "react-bootstrap-icons";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { EDIT_BANK_DETAILS } from "./../../../../redux/actions";
+import './../../../styles/dashboard.scss'
+import useBanks from "./../../../../hooks/banks"
 
-const Bank = () => {
-    const { registerBank } = useBanks()
-    const [formValues, setFormValues] = useState({
-        name: '',
-        slug: '',
-        code: ''
-    })
- 
-    const formValidator = useMemo(() => (new SimpleReactValidator({
-        element: message => <div className="text-danger mb-3">{message}</div>,
-        validators: {
-            bank_slug: {  // name the rule
-              message: 'The slug must be made up of three or more capital letters',
-              rule: (val, params, validator) => {
-                return val.length > 0 ? validator.helpers.testRegex(val,/^[A-Z]{3,}$/): true
-              }
-            }
+const BankPage = () => {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const location = useLocation()
+    const [banks, setBanks] = useState([])
+    const { deleteBank, getBanks } = useBanks() 
+
+    const bankHomeRoute = useMemo(() => (location.pathname === '/admin/banks'), [location.pathname])
+
+    useEffect(() => {
+        if(bankHomeRoute){
+            (async () => {
+                const response = await getBanks()
+                setBanks(prev => (response))
+            })()
         }
-    })), [])
+    },[bankHomeRoute])
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
+    const handleBankEdit = bankDetails => {
+        dispatch({
+            type: EDIT_BANK_DETAILS,
+            payload: bankDetails
+        })
 
-        setFormValues(prev => ({
-            ...prev,
-            [name] : value
-        }))
+        navigate('/admin/banks/edit')
     }
 
-    const handleBankFormSubmit = async (e) => {
-        e.preventDefault()
-        
-        if (formValidator.allValid()) {
-            
-            await registerBank(formValues)
+    const handleBankDelete = async bankId => {
+        const response = await deleteBank(bankId)
 
-        } else {
-            formValidator.showMessages();
-
-            window.scrollTo(0,0)
+        if(response === true){
+            // Remove the deleted bank details
+            setBanks(prevValues => {
+                return prevValues.filter(bank => bank._id !== bankId)
+            })
         }
     }
 
     return (
-            <div className="col-md-8">
-                    <h3>Add a Bank</h3>
-                    <form onSubmit={handleBankFormSubmit} className="text-start">
-                        <label htmlFor="name" className="form-label"><strong>Name</strong></label>
-                        <input
-                            type="text"
-                            className='form-control mb-3 w-100'
-                            name="name"
-                            placeholder="Name"
-                            value={formValues.name}
-                            onChange={handleChange}
-                            autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('name')}}
-                        />
-                        {formValidator.message('name', formValues.name, 'required|alpha_num_space|min:3,string')}
+        <section className="col-md-9 col-sm-12 mb-5">
+            <div className="row">            
 
-                        <label htmlFor="slug" className="form-label"><strong>Slug (optional)</strong></label>
-                        <input
-                            type="text"
-                            className='form-control mb-3 w-100'
-                            name="slug"
-                            placeholder="Slug"
-                            value={formValues.slug}
-                            onChange={handleChange}
-                            autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('slug')}}
-                        />
-                        {formValidator.message('slug', formValues.slug, 'bank_slug')}
-
-                        <label htmlFor="code" className="form-label"><strong>Code</strong></label>
-                        <input
-                            type="text"
-                            className='form-control mb-3 w-100'
-                            name="code"
-                            placeholder="Code"
-                            value={formValues.code}
-                            onChange={handleChange}
-                            autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('code')}}
-                        />
-                        {formValidator.message('code', formValues.code, 'required|string|min:3,string')}
-
-                        <button className="btn btn-large btn-success" type="submit">Submit</button>
-                    </form>
+            { bankHomeRoute
+              && <div className="offset-md-1 offset-lg-1 col-lg-9 col-md-8 col-sm-12">
+                <div className="row">
+              {/* Button to add new bank and a tabular list of registered banks */}
+                <div className="col-12 mb-5 d-flex justify-content-md-end justify-content-center">
+                    <button type="button" className="btn btn-medium btn-success" onClick={() => { navigate('/admin/banks/register') }}><PlusSquareDotted className="text-white mx-3" /> Add Bank</button>
                 </div>
-        
+                <br/>
+                    {/* Table showing list of banks */}
+                    <div className="col-md-12 table-responsive">
+                        <table className="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Slug</th>
+                                    <th>Code</th>
+
+                        {/* Action buttons header */}
+                                    <th colSpan={2}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {banks.length > 0 && banks.map((bank, index) => {
+                                    return <tr key={bank._id}>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{bank.name}</td>
+                                        <td>{bank.slug}</td>
+                                        <td>{bank.code}</td>
+
+                                    {/* Action buttons */}
+                                        <td colSpan={2} className="d-flex justify-content-around pb-4 align-items-start">
+                                            <button className="btn btn-small btn-primary d-flex" onClick={() => handleBankEdit(bank)}>
+                                                <PencilSquare className="fs-5 text-white mx-1" /> Edit
+                                            </button>
+
+                                            <button className="btn btn-small btn-danger d-flex" onClick={() => handleBankDelete(bank._id)}>
+                                                <TrashFill className="fs-5 text-white mx-1" /> Delete
+                                            </button>
+                                        </td>
+                                    </tr>;
+                                })}
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+            </div>
+            }
+
+            <Outlet />
+            </div>
+        </section>
     )
 }
 
-export default Bank
+export default BankPage
