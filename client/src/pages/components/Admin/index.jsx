@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { PencilSquare, PlusSquareDotted, TrashFill } from "react-bootstrap-icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -15,17 +15,20 @@ const AdminPage = () => {
     const [admins, setAdmins] = useState([])
     const { deleteAdmin, getAdmins } = useUserProfile()
     const { userIsAdmin } = useAuth()
+    const adminHomeRoute = useMemo(() => (location.pathname === '/admin'), [location.pathname])
+    const isAdmin = useMemo(() => (userIsAdmin()), [userIsAdmin])
+
 
     useEffect(() => {
-        if(!userIsAdmin()) {
+        if(!isAdmin) {
             navigate("/admin/login")
-        }else{
+        }else if(isAdmin && adminHomeRoute){
             (async () => {
                 const adminsList = await getAdmins()
                 setAdmins(prevAdmins => (adminsList))
             })()
         }
-    },[navigate])
+    },[isAdmin, adminHomeRoute])
 
     const handleAdminEdit = adminDetails => {
         dispatch({
@@ -47,10 +50,6 @@ const AdminPage = () => {
         }
     }
 
-    const adminHomeRoute = () => {
-        return location.pathname === '/admin'
-    }
-
     return (
         <section className="col-12 mb-5">
             <div className="row">
@@ -65,7 +64,7 @@ const AdminPage = () => {
             }
             
 
-            { admins && admins.length > 0 && adminHomeRoute()
+            { admins && admins.length > 0 && adminHomeRoute
               && <div className="offset-md-1 offset-lg-1 col-lg-9 col-md-8 col-sm-12">
                 <div className="row">
               {/* Button to add new admin and a tabular list of registered admins */}
