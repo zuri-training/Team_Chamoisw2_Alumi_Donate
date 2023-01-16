@@ -16,6 +16,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import profileReducer from './reducers/profileReducer';
+import BanksReducer from './reducers/bankReducer';
 
 const persistConfig = {
   key: 'root',
@@ -27,7 +28,8 @@ export const rootReducers = combineReducers({
   donations: donationReducer,
   ui: uiReducer,
   college: collegeReducer,
-  profile: profileReducer
+  profile: profileReducer,
+  bank: BanksReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);
