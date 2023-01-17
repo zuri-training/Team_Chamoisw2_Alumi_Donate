@@ -1,6 +1,7 @@
 const { handleAsync, createApiError, handleResponse, verifyJwtToken } = require('../utils/helpers')
 const Bank = require('./../models/bankModel')
 const { validationResult } = require('express-validator')
+const axios = require('axios')
 
 const registerBank = handleAsync(async (req, res) => {
     // If token verification fails, an error is thrown and code execution stops
@@ -25,9 +26,13 @@ const getAllBanks = handleAsync(async (req, res) => {
     // If token verification fails, an error is thrown and code execution stops
     verifyJwtToken(req.headers.authorization)
 
-    const banks = await Bank.find({}).exec()
+    const banks = await axios.get("https://api.paystack.co/bank?currency=NGN&perPage=100",{
+        headers: {
+            'Authorization': `Bearer ${process.env.PAYSTACK_SECRET}`
+        }
+    })
 
-    return res.status(200).json(handleResponse({message: banks}))
+    return res.status(200).json(handleResponse({message: banks.data.data}))
 })
 
 const bankExists = async bankId => {
