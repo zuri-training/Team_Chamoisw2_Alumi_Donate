@@ -150,6 +150,38 @@ const useColleges =  () => {
             return 
         }
     }
+
+    const verifyAccountDetails = async (accountDetails) => {
+        Toast.fire({
+            icon: "info",
+            title: "Verifying Account Details",
+            timerProgressBar: false,
+            timer: undefined    
+        })
+
+        try{
+            const response = await axiosPrivate.post('/colleges/account/verify', accountDetails)
+
+            if(true === response.data.data.error){
+                throw new Error("Account Verification Failed")
+            }
+
+            Toast.fire({
+                icon: "success",
+                title: "Account verification successful",
+            })
+
+            return true
+        }catch(err){
+            Toast.fire({
+                icon: "error",
+                title: "Account verification failed"
+            })
+
+            return false
+        }
+    }
+
     return {
         getColleges,
         getCollege,
@@ -157,7 +189,8 @@ const useColleges =  () => {
         getCollegesFullDetails,
         deleteCollege,
         getCollegeReduxData,
-        updateCollege
+        updateCollege,
+        verifyAccountDetails
     }
 }
 

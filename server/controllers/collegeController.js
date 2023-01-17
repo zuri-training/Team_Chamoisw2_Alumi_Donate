@@ -1,7 +1,9 @@
-const pureUUID = require('pure-uuid');
-const College = require('./../models/collegeModel');
-const { handleAsync, createApiError, handleResponse } = require('./../utils/helpers');
+const pureUUID = require('pure-uuid')
+const College = require('./../models/collegeModel')
+const { handleAsync, createApiError, handleResponse, verifyJwtToken } = require('./../utils/helpers')
 const { validationResult } = require('express-validator')
+const Bank = require('./../models/bankModel')
+const axios = require('axios')
 
 const getAllColleges = handleAsync(async (req,res) => {
     const colleges = await College.find({}, {_id: 1, name: 1,location: 1 }).exec()
@@ -107,11 +109,38 @@ const updateCollege = handleAsync(async (req, res) => {
    res.status(200).json(handleResponse({message: "College(Institution) details has been updated successfully"}))
 })
 
+const verifyAccount = handleAsync(async (req, res) => {
+    verifyJwtToken(req.headers.authorization)
+
+    const { accountName, accountNumber, bankId } = req.body
+
+    if(accountNumber === '' || bankId === '') throw createApiError("Please provide account name, number and bank", 400)
+
+    // Find the bank record given the provided ID
+    const bankFound = await Bank.findById(bankId, { code: true }).exec()
+
+    // Make a request to paystack to verify the account
+    const verResponse = await axios.get(`https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankFound.code}`,{
+        headers: {
+            'Authorization': `Bearer ${process.env.PAYSTACK_SECRET}`
+        }
+    })
+
+    if(verResponse.data.status === false) {
+        throw createApiError("Failed to verify account", 400)
+    }
+    else if(verResponse.data.status === true && verResponse.data.data.account_number === accountNumber) {
+        res.status(200).json(handleResponse({message: true}))
+    } 
+
+})
+
 module.exports = { 
     getAllColleges,
     getCollege,
     registerCollege,
     getCollegesFullDetails,
     deleteCollege,
-    updateCollege
+    updateCollege,
+    verifyAccount
 }

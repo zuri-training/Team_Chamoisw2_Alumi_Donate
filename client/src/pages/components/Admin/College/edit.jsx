@@ -69,7 +69,7 @@ const EditCollegePage = () => {
         setFormValues(prevValues => ({...prevValues, name: `${prevValues.name} `}))
 
         // Simulate removal of empty character
-        setFormValues(prevValues => ({...prevValues, name: `${prevValues.name}`}))
+        setFormValues(prevValues => ({...prevValues, name: `${prevValues.name.trim()}`}))
     }
 
     const handleEditChange = (e) => {

@@ -38,7 +38,7 @@ const RegisterAdminPage = () => {
         setFormValues({...formValues, fullName: `${formValues.fullName} `})
 
         // Simulate removal of empty character
-        setFormValues({...formValues, fullName: `${formValues.fullName}`})
+        setFormValues({...formValues, fullName: `${formValues.fullName.trim()}`})
     }
 
     const handleChange = (e) => {

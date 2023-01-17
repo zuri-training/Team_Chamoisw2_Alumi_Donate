@@ -5,7 +5,7 @@ import useBanks from "../../../../hooks/banks";
 import { useLocation } from "react-router-dom";
 
 const RegisterCollegePage = () => {
-    const { registerCollege } = useColleges()
+    const { registerCollege, verifyAccountDetails } = useColleges()
     const { getBanks } = useBanks()
     const [banks, setBanks] = useState(null)
     const [formValidator, setFormValidator] = useState(null)
@@ -40,7 +40,6 @@ const RegisterCollegePage = () => {
             const response = await getBanks()
 
             setBanks(prevList => {
-                setFormValues({ ...formValues, bankId: response[0]._id })
                 return response
             })
         })()
@@ -54,10 +53,19 @@ const RegisterCollegePage = () => {
         setFormValues({...formValues, name: `${formValues.name} `})
 
         // Simulate removal of empty character
-        setFormValues({...formValues, name: `${formValues.name}`})
+        setFormValues({...formValues, name: `${formValues.name.trim()}`})
     }
 
-    const handleChange = (e) => {
+    // Validate account details
+    const validateAccountDetails = async () => {
+        const { accountName, accountNumber, bankId } = formValues
+
+        // Any error that may occur from this request has been caught and handled
+        // in the verifyAccountDetails hook
+        return await verifyAccountDetails({ accountName, accountNumber, bankId })
+    }
+
+    const handleChange = async (e) => {
         const { name, value } = e.target
 
         setFormValues(prev => ({
@@ -69,6 +77,11 @@ const RegisterCollegePage = () => {
     const handleRegFormSubmit = async (e) => {
         e.preventDefault()
         
+        // Validate account details
+        const accountValid = await validateAccountDetails()
+
+        if(!accountValid) return
+
         if (formValidator.allValid()) {
 
             await registerCollege(formValues)
@@ -177,6 +190,9 @@ const RegisterCollegePage = () => {
                             value={formValues.bankId}
                             onChange={handleChange}
                             autoComplete="off">
+                            {
+                                <option value=''>Select Bank</option>
+                            }
                             {
                                 banks.length > 0 && banks.map(bank => (<option key={bank.code} value={ bank._id }>{ bank.name }</option>))
                             }
