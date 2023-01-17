@@ -5,7 +5,6 @@ const collegeSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true
   },
   totalDonations: {
     type: Number,
@@ -44,9 +43,8 @@ const collegeSchema = new Schema({
       required: true,
     },
     bank: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
-      ref: 'Bank'
     }
   }
 });
