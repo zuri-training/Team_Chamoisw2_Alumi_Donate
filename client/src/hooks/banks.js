@@ -44,17 +44,24 @@ const useBanks = () => {
 
     const getBanks = async () => {
 
-        setLoaderVisible(true)
+        try{
+            setLoaderVisible(true)
 
-        const response = await axiosPrivate.get('banks/all')
+            const response = await axiosPrivate.get('banks/all')
+            
+            setLoaderVisible(false)
 
-        setLoaderVisible(false)
+            if(true === response.data.data.error){
+             throw new Error("Some errors were encountered while trying to load form.")    
+            }
 
-        if(true === response.data.data.error){
+            return response.data.data.message
+        }catch(err){
+            displayErrMsg(err)
+
             return []
         }
-
-        return response.data.data.message
+        
     }
 
     const deleteBank = async (bankId) => {

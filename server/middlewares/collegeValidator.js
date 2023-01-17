@@ -6,7 +6,7 @@ const validateCollegeRegData = [
     body("email").trim().isEmail().withMessage('Invalid email format'),
     body("accountName").trim().isString().isLength({min: 5}).withMessage('Provide a valid account name'),
     body("accountNumber").trim().isNumeric().isLength({min: 10}).withMessage('Provide a valid account number'),
-    body("bankId").trim().isMongoId().withMessage('Incorrect bank info'),
+    body("bankCode").trim().isString().isLength({min: 3}).withMessage('Incorrect bank info'),
 ]
 
 module.exports = {

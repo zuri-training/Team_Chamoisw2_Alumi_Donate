@@ -16,7 +16,7 @@ const RegisterCollegePage = () => {
         phoneNumbers: '',
         accountName: '',
         accountNumber: '',
-        bankId: ''
+        bankCode: ''
     })
      
     useLayoutEffect(() => {
@@ -38,7 +38,6 @@ const RegisterCollegePage = () => {
     useEffect(() => {
         (async () => {
             const response = await getBanks()
-
             setBanks(prevList => {
                 return response
             })
@@ -58,11 +57,11 @@ const RegisterCollegePage = () => {
 
     // Validate account details
     const validateAccountDetails = async () => {
-        const { accountName, accountNumber, bankId } = formValues
+        const { accountName, accountNumber, bankCode } = formValues
 
         // Any error that may occur from this request has been caught and handled
         // in the verifyAccountDetails hook
-        return await verifyAccountDetails({ accountName, accountNumber, bankId })
+        return await verifyAccountDetails({ accountName, accountNumber, bankCode })
     }
 
     const handleChange = async (e) => {
@@ -185,16 +184,16 @@ const RegisterCollegePage = () => {
                         <label htmlFor="bankCode" className="form-label"><strong>Bank</strong></label>
                         <select
                             className='form-control mb-3 w-100'
-                            name="bankId"
+                            name="bankCode"
                             placeholder="Select Bank"
-                            value={formValues.bankId}
+                            value={formValues.bankCode}
                             onChange={handleChange}
                             autoComplete="off">
                             {
                                 <option value=''>Select Bank</option>
                             }
                             {
-                                banks.length > 0 && banks.map(bank => (<option key={bank.code} value={ bank._id }>{ bank.name }</option>))
+                                banks.length > 0 && banks.map(bank => (<option key={bank.id} value={ bank.code }>{ bank.name }</option>))
                             }
                         </select>
 

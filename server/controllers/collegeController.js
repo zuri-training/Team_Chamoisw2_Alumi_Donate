@@ -36,7 +36,7 @@ const registerCollege = handleAsync(async (req, res) => {
         throw createApiError(errors.array().map(errObj => ("&bull; " + errObj.msg)).join('<br /><br />'), 422)
     }
 
-   const { name, location, email, phoneNumbers, accountName, accountNumber, bankId } = req.body
+   const { name, location, email, phoneNumbers, accountName, accountNumber, bankCode } = req.body
 
    try{
     const collegeRegistered = await new College({
@@ -47,7 +47,7 @@ const registerCollege = handleAsync(async (req, res) => {
         accountDetails: {
             name: accountName,
             number: accountNumber,
-            bank: bankId
+            bank: bankCode
         },
         contact: {
             email,
@@ -59,7 +59,7 @@ const registerCollege = handleAsync(async (req, res) => {
 
     res.status(200).json(handleResponse({message: "College(Institution) has been successfully registered"}))
    }catch(err){
-     throw createApiError("Some unique details of the data you provided are in use by another college(Institution)", 500)
+     throw createApiError("The email you provided is in use by another college(Institution)", 500)
    }
 })
 
@@ -112,15 +112,12 @@ const updateCollege = handleAsync(async (req, res) => {
 const verifyAccount = handleAsync(async (req, res) => {
     verifyJwtToken(req.headers.authorization)
 
-    const { accountName, accountNumber, bankId } = req.body
+    const { accountName, accountNumber, bankCode } = req.body
 
-    if(accountNumber === '' || bankId === '') throw createApiError("Please provide account name, number and bank", 400)
-
-    // Find the bank record given the provided ID
-    const bankFound = await Bank.findById(bankId, { code: true }).exec()
+    if(accountNumber === '' || bankCode === '') throw createApiError("Please provide account name, number and bank", 400)
 
     // Make a request to paystack to verify the account
-    const verResponse = await axios.get(`https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankFound.code}`,{
+    const verResponse = await axios.get(`https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,{
         headers: {
             'Authorization': `Bearer ${process.env.PAYSTACK_SECRET}`
         }
