@@ -1,11 +1,25 @@
-const { handleAsync, handleResponse, createApiError } = require("../utils/helpers")
+const { handleAsync, handleResponse, createApiError, verifyJwtToken } = require("../utils/helpers")
 const axios = require('axios')
 const Donation = require('./../models/donationsModel')
 const College = require('./../models/collegeModel')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 
-const verifyTransaction = handleAsync(async(req,res) => {    
+const verifyTransaction = handleAsync(async(req,res) => { 
+        const { authorization } = req.headers
+
+        if(!authorization) throw createApiError("User not authorized", 401)
+        
+        let tokenPayload = null
+
+        try{
+            tokenPayload = verifyJwtToken(authorization)
+        }catch(err){
+            throw createApiError(err.message, 401)
+        }
+
+        const { userId, collegeId } = tokenPayload
+
         // Get the reference from the url params
         const reference = req.params.reference
 
@@ -16,13 +30,7 @@ const verifyTransaction = handleAsync(async(req,res) => {
         })
         
         if(paystackResponse.data.status === true && paystackResponse.data.data.status === 'success'){
-            const { authorization } = req.headers
 
-            if(!authorization) throw Error("User not authorized")
-
-            const { userId, collegeId } = jwt.verify(authorization.split(" ")[1], process.env.JWT_SECRET)
-
-           
             const session = await mongoose.startSession();
 
             session.startTransaction()
