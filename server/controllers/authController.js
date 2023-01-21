@@ -136,7 +136,7 @@ const forgotPassword = handleAsync(async (req, res) => {
      */
         const { email } = req.body
         const userFound = await User.findOne({ email })
-    
+        
         if (!userFound) {
         return res.status(400).json({ message: "User does not exist" })
         }
@@ -144,18 +144,18 @@ const forgotPassword = handleAsync(async (req, res) => {
 
         const resetPass = await ResetPassword.create({ userId: userFound._id, token })
     
-        const link = `${process.env.BASE_URL}/changepassword/${token}`
+        const link = `${process.env.BASE_URL}/change-password/${token}`
     
         const emailSent = await sendChangePasswordEmail({ email, link })
-       
+        
         if(!emailSent) {
             await ResetPassword.findOneAndDelete({ userId: userFound._id, token }).exec()
-            throw new Error('Operation failed. Please try again')
+            throw createApiError('Operation failed. Please try again', 500)
         }
 
         res
         .status(200)
-        .json({ message: "Password reset link has been sent to your email account" })
+        .json(handleResponse({ message: "Password reset link has been sent to your email account" }))
 })
 
 const changePassword = handleAsync( async (req, res) => {

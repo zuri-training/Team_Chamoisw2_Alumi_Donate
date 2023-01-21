@@ -15,7 +15,7 @@ const { validateSignUp, validateAdminSignup } = require("../middlewares/authVali
 router.post("/signup", validateSignUp, userSignup)
 router.post("/login", userLogin)
 router.post("/forgotpassword", forgotPassword)
-router.post("/changepassword/:token", changePassword);
+router.post("/change-password/:token", changePassword);
 router.get("/token/verify", verifyJwt)
 router.post("/admin/register", validateAdminSignup, adminSignup)
 router.post("/admin/login", adminLogin)

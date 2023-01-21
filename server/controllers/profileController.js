@@ -43,10 +43,10 @@ const updateUserData = handleAsync(async (req, res) => {
 
     const { password } = req.body
    
-    if(password === "" || password == 'undefined'){ 
+    if(password === "" || typeof password === 'undefined'){ 
         delete req.body.password 
     }else{
-        const newHashedPassword = bcrypt.hashSync(password, 10)
+        const newHashedPassword = await bcrypt.hash(password, 10)
         req.body.password = newHashedPassword
     }
 
@@ -85,7 +85,7 @@ const updateNewsletterSub = handleAsync(async (req, res) => {
     const subscribed = await User.findByIdAndUpdate(tokenVerified.userId, { $set : { newsletterSub: true } }, { new : true }).exec()
 
     if(subscribed){
-        return res.status(200).json(handleResponse({ message: "You have successfully subscribed to our newsletter"}))
+        return res.status(200).json(handleResponse({ message: "Newsletter subscription successful"}))
     }else{
         throw createApiError("Some errors were encountered, Newsletter subscription failed", 500)
     }
@@ -114,7 +114,7 @@ const deleteAdmin = handleAsync(async(req, res) => {
 
     if(!adminDeleted) throw createApiError("Some errors were encountered", 500)
 
-    res.status(200).json(handleResponse({ message: "Admin successfully deleted" }))
+    res.status(200).json(handleResponse({ message: "Admin record successfully deleted" }))
 })
 
 const updateAdmin = handleAsync(async(req, res) => {
@@ -132,7 +132,7 @@ const updateAdmin = handleAsync(async(req, res) => {
 
     const { password } = req.body
 
-    if(password === "" || password == 'undefined'){ 
+    if(password === "" || typeof password === 'undefined'){ 
         delete req.body.password
         delete req.body.confirmPassword
     }else{
