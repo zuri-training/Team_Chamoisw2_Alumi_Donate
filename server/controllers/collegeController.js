@@ -51,7 +51,7 @@ const registerCollege = handleAsync(async (req, res) => {
         },
         contact: {
             email,
-            phoneNumbers: phoneNumbers.split('\n')
+            phoneNumbers: phoneNumbers ? phoneNumbers.split('\n') : []
         }
     }).save()
 
@@ -74,7 +74,7 @@ const deleteCollege = handleAsync(async (req, res) => {
     const collegeFound = collegeExists(collegeId)
 
     if(!collegeFound) throw createApiError("No college was found with the provided ID") 
-
+    
     const collegeDeleted = await College.findByIdAndDelete(collegeId).exec()
 
     if(!collegeDeleted) throw createApiError('Some errors were encountered', 500)
@@ -83,7 +83,7 @@ const deleteCollege = handleAsync(async (req, res) => {
 })
 
 const updateCollege = handleAsync(async (req, res) => {
-    const { _id, name, location, email, phoneNumbers, accountName, accountNumber, bankId} = req.body
+    const { _id, name, location, email, phoneNumbers, accountName, accountNumber, bankId: bankCode} = req.body
 
     // Check if college with the provided ID exists
     const collegeFound = await collegeExists(_id)
@@ -96,11 +96,11 @@ const updateCollege = handleAsync(async (req, res) => {
         accountDetails: {
             name: accountName,
             number: accountNumber,
-            bank: bankId
+            bank: bankCode
         },
         contact: {
             email,
-            phoneNumbers: phoneNumbers.split('\n')
+            phoneNumbers: phoneNumbers ? phoneNumbers.split('\n') : []
         }
    })
 
@@ -110,7 +110,12 @@ const updateCollege = handleAsync(async (req, res) => {
 })
 
 const verifyAccount = handleAsync(async (req, res) => {
-    verifyJwtToken(req.headers.authorization)
+    try{
+        verifyJwtToken(req.headers.authorization)
+    }catch(err){
+        throw createApiError(err.message, 401)
+    }
+    
 
     const { accountName, accountNumber, bankCode } = req.body
 
