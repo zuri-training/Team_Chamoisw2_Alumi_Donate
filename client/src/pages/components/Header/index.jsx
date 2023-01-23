@@ -5,9 +5,9 @@ import './../../styles/navbar.scss'
 
 function Header() {
   const { userIsAuth } = useAuth()
-  const isAuthenticated = useMemo(() => (userIsAuth()), [userIsAuth])
   const navigate = useNavigate()  
   const location = useLocation()
+  const isAuthenticated = useMemo(() => (userIsAuth()), [location.pathname])
   const headerLinks = useMemo(() => (['donations', 'about-us', 'faq', 'contact-us']), [])
 
   useEffect(() => {
@@ -20,8 +20,8 @@ function Header() {
 
     //Add the active className to the presently active nav-link
     document.querySelector(`.${location.pathname.substring(1).trim()}`).classList.add('active')
-  }, [navigate])
-
+  }, [location.pathname])
+  
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
     <div className="container-fluid">
