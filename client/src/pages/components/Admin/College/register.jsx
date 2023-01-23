@@ -75,14 +75,13 @@ const RegisterCollegePage = () => {
 
     const handleRegFormSubmit = async (e) => {
         e.preventDefault()
-        
-        // Validate account details
-        const accountValid = await validateAccountDetails()
-
-        if(!accountValid) return
 
         if (formValidator.allValid()) {
+            // Validate account details
+            const accountValid = await validateAccountDetails()
 
+            if(!accountValid) return
+            
             await registerCollege(formValues)
 
         } else {
