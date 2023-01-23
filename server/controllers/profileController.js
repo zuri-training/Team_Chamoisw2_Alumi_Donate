@@ -23,7 +23,7 @@ const getUserData  = handleAsync(async (req, res) => {
             phoneNumber: true,
             gradYear: true
         })
-        .populate({path: 'collegeId', select: ['name']}).exec()
+        .populate({path: 'collegeId', select: ['name', 'donationLink']}).exec()
         
     return res.status(200).json(handleResponse({message: userData}))
 })
