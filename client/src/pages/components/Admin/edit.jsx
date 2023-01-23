@@ -1,9 +1,9 @@
-import { useState, useLayoutEffect } from "react"
+import { useState, useLayoutEffect, useEffect } from "react"
 import SimpleReactValidator from "simple-react-validator"
 import useUserProfile from "../../../hooks/profile"
 import useAuth from "../../../hooks/auth"
 import { Toast } from "../ToastAlert"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 const EditAdminPage = () => {
     const { getAdminReduxData } = useAuth()
@@ -11,6 +11,7 @@ const EditAdminPage = () => {
     const [formValidator, setFormValidator] = useState(null)
     const [formValues, setFormValues] = useState(null)  
     const navigate = useNavigate()
+    const location = useLocation()
 
     useLayoutEffect(() => {
         const { _id, fullName, email, phoneNumber } = getAdminReduxData()
@@ -25,7 +26,7 @@ const EditAdminPage = () => {
         })
     }, [navigate])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setFormValidator(new SimpleReactValidator({
             element: message => <div className="text-danger mb-3">{message}</div>,
             validators: {
@@ -38,7 +39,7 @@ const EditAdminPage = () => {
                 }
             }
         }))
-    }, [])
+    }, [location.pathname])
 
     const triggerValidationByFocus = () => {
         const element = document.querySelector('.fullName')
