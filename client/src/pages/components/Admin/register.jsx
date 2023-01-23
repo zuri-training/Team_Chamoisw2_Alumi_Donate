@@ -1,9 +1,10 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useEffect } from "react";
 import SimpleReactValidator from 'simple-react-validator';
 import useAuth from "../../../hooks/auth";
 import { Toast } from "../ToastAlert";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const RegisterAdminPage = () => {
+const AdminRegisterPage = () => {
     const [formValidator, setFormValidator] = useState(null)
     const { registerAdmin, userIsAdmin, adminExists: adminExistsFunc } = useAuth()
     const [adminExists] = useState(userIsAdmin())
@@ -14,13 +15,15 @@ const RegisterAdminPage = () => {
         password: '',
         confirmPassword: ''
     })
+    const location = useLocation()
+    const navigate = useNavigate()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setFormValidator(new SimpleReactValidator({
             element: message => <div className="text-danger mb-3">{message}</div>,
             validators: {
                 phoneNumber: {  // name the rule
-                    message: 'The phone number must be a valid phone number(e.g 08012345678)).',
+                    message: 'The phone number must be a valid phone number(e.g 08012345678).',
                     rule: (val, params, validator) => {
                     return new RegExp('^(0(7|8|9){1}(0|1){1}[0-9]{8}){1}$').test(val)
                     },
@@ -54,8 +57,22 @@ const RegisterAdminPage = () => {
         return formValues.password === formValues.confirmPassword
     }
 
+    const resetForm = () => {
+
+        setFormValues({
+            fullName: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+            confirmPassword: ''
+        })
+
+    }
+
     const handleAdminFormSubmit = async (e) => {
         e.preventDefault()
+        
+        triggerValidationByFocus()
         
         if(!passwordsMatch()){
             Toast.fire({
@@ -63,21 +80,27 @@ const RegisterAdminPage = () => {
                 title: 'Passwords do not match'
             })
             return
-        }else if (formValidator.allValid()) {
+        }else if(formValidator.allValid()) {
 
-            await registerAdmin(formValues)
+            const regResponse = await registerAdmin(formValues)
 
-        } else {
-            formValidator.showMessages();
-            window.scrollTo(0,0)
-            triggerValidationByFocus()
+            if(regResponse === true){
+                resetForm()
+            }
+
+            return
         }
-    }
-   
-    return (
-        <section className="col-md-9 col-sm-12">
-        <div className="row justify-content-md-center mb-5">
         
+        formValidator.showMessages();
+        
+        window.scrollTo(0,0)
+        
+    }
+
+    return (
+        <section className="offset-md-2 col-md-8 col-sm-12">
+        <div className="row justify-content-md-center mb-5">
+            
             {
                 // This condition checks to see if an admin has been registered
                 // If yes, check to see if admin is authenticated and load form if true
@@ -92,13 +115,14 @@ const RegisterAdminPage = () => {
                         <label htmlFor="fullName" className="form-label"><strong>Full Name</strong></label>
                         <input
                             type="text"
-                            className='form-control mb-3 w-100 name'
+                            className='form-control mb-3 w-100 fullName'
                             name="fullName"
                             placeholder="FullName"
                             value={formValues.fullName}
                             onChange={handleChange}
                             autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('fullName')}}
+                            onKeyUp={() => { formValidator.showMessagesFor('fullName') }}
+                            // onBlur={() => {formValidator.showMessageFor('fullName')}}
                         />
                         {formValidator.message('fullName', formValues.fullName, 'required|string|min:3')}
 
@@ -111,7 +135,7 @@ const RegisterAdminPage = () => {
                             value={formValues.email}
                             onChange={handleChange}
                             autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('email')}}
+                            onKeyUp={() => {formValidator.showMessageFor('email')}}
                         />
                         {formValidator.message('email', formValues.email, 'required|email')}
 
@@ -124,7 +148,7 @@ const RegisterAdminPage = () => {
                             value={formValues.phoneNumber}
                             onChange={handleChange}
                             autoComplete="off"
-                            onBlur={() => {formValidator.showMessageFor('phoneNumber')}}
+                            onKeyUp={() => {formValidator.showMessageFor('phoneNumber')}}
                         />
                         {formValidator.message('phoneNumber', formValues.phoneNumber, 'required|phoneNumber')}
 
@@ -159,4 +183,4 @@ const RegisterAdminPage = () => {
     )
 }
 
-export default RegisterAdminPage
+export default AdminRegisterPage
