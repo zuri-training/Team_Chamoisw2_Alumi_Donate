@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import useColleges from "../../../../hooks/colleges";
 import { PencilSquare, PlusSquareDotted, TrashFill } from "react-bootstrap-icons";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { EDIT_COLLEGE_DETAILS } from "../../../../redux/actions";
 import { useDispatch } from "react-redux";
+import useAuth from "../../../../hooks/auth"
 
 const CollegesPage = () => {
     const { getCollegesFullDetails, deleteCollege } = useColleges()
@@ -11,6 +12,7 @@ const CollegesPage = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const location = useLocation()
+    const { userIsAdmin } = useAuth()
     const isCollegeHomeRoute = useMemo(() => (location.pathname === '/admin/colleges'), [location.pathname])
 
     // Fetch all registered colleges
@@ -41,7 +43,7 @@ const CollegesPage = () => {
             })
         }
     }
-
+    
     return (
         <section className="col-md-9 mb-5">
             {/* Button to add new college and a tabular list of registered colleges */}
