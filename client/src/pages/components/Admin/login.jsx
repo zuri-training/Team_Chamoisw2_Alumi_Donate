@@ -1,18 +1,12 @@
-import React,{ useState, useLayoutEffect } from 'react';
+import React,{ useState, useEffect, useMemo } from 'react';
 import useAuth from './../../../hooks/auth'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdminSignIn = () => {
   const [formValues, setFormValues] = useState({ email: '', password: ''});
-  const { loginAdmin, adminExists: adminExistsFunc }  = useAuth()
-  const [adminExists, setAdminExists] = useState(false);
+  const { loginAdmin, adminExists }  = useAuth()
+  
   const navigate = useNavigate() 
-
-  useLayoutEffect(() => {
-    (async () => {
-      setAdminExists(await adminExistsFunc())
-    })()
-  },[])
 
   const handleChange = e => {
     setFormValues({
@@ -63,7 +57,7 @@ const AdminSignIn = () => {
       </div>
         {/* If admin has not been registered, show the link for registration */}
         {
-          !adminExists &&
+          !adminExists() &&
           <div className='col-12'>
             <div className='text-center mt-3'>Don't have an account? <Link to="/admin/register">Register</Link></div>
           </div>
