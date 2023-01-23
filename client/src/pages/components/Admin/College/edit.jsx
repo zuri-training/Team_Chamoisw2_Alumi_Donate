@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect } from "react"
+import { useState, useEffect } from "react"
 import useColleges from "../../../../hooks/colleges"
 import useBanks from "../../../../hooks/banks"
 import SimpleReactValidator from "simple-react-validator"
@@ -10,7 +10,7 @@ const EditCollegePage = () => {
     const [formValidator, setFormValidator] = useState(null)
     const [formValues, setFormValues] = useState(null)  
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const { _id, name, location, contact, accountDetails } = getCollegeReduxData()
         
         setFormValues({ 
@@ -25,7 +25,7 @@ const EditCollegePage = () => {
         })
     }, [])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setFormValidator(new SimpleReactValidator({
             element: message => <div className="text-danger mb-3">{message}</div>,
             validators: {
@@ -51,11 +51,6 @@ const EditCollegePage = () => {
     useEffect(() => {
         (async () => {
             const response = await getBanks()
-
-            setFormValues(prevValues => ({
-                ...prevValues,
-                bankId: prevValues.bankId ? prevValues.bankId : response[0]._id
-            }))
 
             setBanks(response)
         })()
@@ -94,6 +89,8 @@ const EditCollegePage = () => {
             triggerValidationByFocus()
         }
     }
+
+    if(!formValues)return <></>
 
     return (
         Boolean(formValues) &&
@@ -191,11 +188,11 @@ const EditCollegePage = () => {
                     autoComplete="off">
                     {/* The currently selected bank for the college is made to appear first */}
                     {
-                        banks.length > 0 && banks.map(bank => (bank._id === formValues.bankId ? <option key={bank.code} value={ bank._id }>{ bank.name }</option> : ''))
+                        formValues && banks.length > 0 && banks.map(bank => (bank.code === formValues.bankId ? <option key={bank.code} value={ bank.code }>{ bank.name }</option> : ''))
                     }
                     {/* Other banks are listed here */}
                     {
-                        banks.length > 0 && banks.map(bank => (bank._id !== formValues.bankId ? <option key={bank.code} value={ bank._id }>{ bank.name }</option> : ''))
+                        formValues && banks.length > 0 && banks.map(bank => (bank.code !== formValues.bankId ? <option key={bank.code} value={ bank.code }>{ bank.name }</option> : ''))
                     }
                 </select>
 
