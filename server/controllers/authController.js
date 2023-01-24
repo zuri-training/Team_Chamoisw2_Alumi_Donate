@@ -246,6 +246,22 @@ const adminLogin = handleAsync(async (req, res) => {
 })
 
 const adminSignup = handleAsync(async (req, res) => {
+
+  const admin = await Admin.findOne({}).exec()
+
+  try{
+    if(admin){
+      const jwtPayload = verifyJwtToken(req.headers.authorization)
+
+      if(!jwtPayload){
+        throw createApiError("User not authorized", 400)
+      }
+    }
+
+  }catch(err){
+    throw createApiError(err.message, err.statusCode)
+  }
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -258,38 +274,44 @@ const adminSignup = handleAsync(async (req, res) => {
   const adminFound = await Admin.findOne({ email }).exec()
 
   if (adminFound) {
-    throw createApiError("Email already exists", 400)
+    throw createApiError("Email is not available", 400)
   }
 
-  // Hash the password  
-  bcrypt.hash(password, 10, async function (err, hash) {
-    if (err) {
-      throw createApiError("Account could not be created", 400)
-    }
+  const accountCreated = await new Promise((resolve, reject) => {
+    // Hash the password  
+    bcrypt.hash(password, 10, async function (err, hash) {
+      if (err) {
+        resolve(false)
+      }
 
-    const admin = await new Admin({
-      email,
-      password: hash,
-      fullName,
-      phoneNumber
+      try{
+        await new Admin({
+          email,
+          password: hash,
+          fullName,
+          phoneNumber
+        })
+        .save()
+
+        resolve(true)
+
+      }catch(err){
+        resolve(false)
+      }
+
     })
-    .save()
-
-    delete admin.password
-
-    console.log(admin)
-
-    res.status(201).json(handleResponse({
-      message: "Admin registered successfully",
-    }))
   })
+
+  if(!accountCreated) throw createApiError("Account could not be created", 400)
+    
+  res.status(200).json(handleResponse({message: "Account created successfully"}))
 
 })
 
 const adminExists = handleAsync(async (req, res) => {
-  const adminFound = await Admin.findOne({}).exec()
-
-  return res.status(200).json(handleResponse({message: adminFound ? true: false}))
+  const adminFound = await Admin.find().exec()
+  
+  res.status(200).json(handleResponse({message: adminFound.length > 0 ? 'exists': 'none'}))
 })
 
 module.exports = {

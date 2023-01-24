@@ -46,7 +46,7 @@ const RegisterBankPage = () => {
     }
 
     return (
-            <div className="col-md-9 col-sm-12">
+            <div className="col-md-9 col-sm-12 d-flex flex-column justify-content-md-center align-items-md-center">
                     <h3>Add a Bank</h3>
                     <form onSubmit={handleBankFormSubmit} className="text-start">
                         <label htmlFor="name" className="form-label"><strong>Name</strong></label>

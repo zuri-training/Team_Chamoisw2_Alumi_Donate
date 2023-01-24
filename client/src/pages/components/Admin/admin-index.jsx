@@ -1,29 +1,27 @@
 import { useEffect, useState, useMemo } from "react";
 import { PencilSquare, PlusSquareDotted, TrashFill } from "react-bootstrap-icons";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, Navigate, Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { EDIT_ADMIN_DETAILS } from "../../../redux/actions";
 import useUserProfile from "../../../hooks/profile";
 import useAuth from "../../../hooks/auth";
 import Sidebar from "../Sidebar";
 import './../../styles/dashboard.scss'
+import AdminLoginPage from './login'
+import Header from "../Header";
+import Footer from "../Footer";
 
 const AdminPage = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const location = useLocation()
     const { deleteAdmin, getAdmins } = useUserProfile()
-    const { userIsAdmin } = useAuth()
+    const { userIsAdmin, adminExists } = useAuth()
     const [admins, setAdmins] = useState([])
-    const adminHomeRoute = useMemo(() => (location.pathname === '/admin'), [location.pathname])
-    const isAdmin = useMemo(() => (userIsAdmin()), [location.pathname])
-    const adminsList = useMemo(() => (getAdmins()),[location.pathname])
 
-    useEffect(() => {
-        if(!isAdmin) {
-            navigate("/admin/login")
-        }
-    },[isAdmin])
+    const adminHomeRoute = useMemo(() => (location.pathname === '/admin'), [location.pathname])
+    const isAdmin = useMemo(() => (userIsAdmin()), [userIsAdmin])
+    const adminsList = useMemo(() => (getAdmins()),[])
 
     useEffect(() => {
         
@@ -31,7 +29,7 @@ const AdminPage = () => {
             setAdmins(res)
         })
         
-    }, [adminsList])
+    }, [])
 
     const handleAdminEdit = adminDetails => {
         dispatch({
@@ -53,9 +51,16 @@ const AdminPage = () => {
         }
     }
 
+    useEffect(() => {
+        window.scrollTo(0,0)
+    }, [navigate])
+
     return (
-        <section className="col-12 mb-5">
-            <div className="row">
+        <section className="col-12">
+            <div className="row px-0 mx-0">
+            
+            <Header />
+            
             {/* Admin sidebar */}
             {
                 isAdmin && 
@@ -72,7 +77,7 @@ const AdminPage = () => {
                 <div className="row">
               {/* Button to add new admin and a tabular list of registered admins */}
                 <div className="col-12 mb-5 d-flex justify-content-md-end justify-content-center">
-                    <button type="button" className="btn btn-medium btn-success" onClick={() => { navigate('/admin/register') }}><PlusSquareDotted className="text-white mx-3" /> Add Admin</button>
+                    {/* <button type="button" className="btn btn-medium btn-success" onClick={() => { navigate('/admin/register') }}><PlusSquareDotted className="text-white mx-3" /> Add Admin</button> */}
                 </div>
                 <br/>
                     {/* Table showing list of admins */}
@@ -115,9 +120,12 @@ const AdminPage = () => {
             </div>
             </div>
             }
-
+           
             <Outlet />
+
+            <Footer />
             </div>
+            
         </section>
     )
 }

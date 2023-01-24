@@ -139,11 +139,14 @@ const useAuth = () => {
         }
     }
 
-    const adminExists = async () => {
+    const adminExists = () => {
         try{
-            const response = await axiosPublic.post("/auth/admin/exists")
+            return (async() => {
+                const response = await axiosPublic.post("/auth/admin/exists")
 
-            return response.data.data.message
+                return response.data.data.message === 'exists'
+            })()
+            
         }catch(err){
             return false
         }
@@ -173,12 +176,13 @@ const useAuth = () => {
                 title: "Admin Registered Successfully",
             })
 
+            return true
         }catch(err){
             setLoaderVisible(false)
 
             displayErrorMessages(err)
             
-            return
+            return false
         }
     }
 

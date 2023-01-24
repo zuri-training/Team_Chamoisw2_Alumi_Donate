@@ -17,8 +17,7 @@ const adminSchema = new Schema({
   },
   phoneNumber: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   }
 });
 

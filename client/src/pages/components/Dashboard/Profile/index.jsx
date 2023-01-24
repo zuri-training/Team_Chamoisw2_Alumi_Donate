@@ -6,7 +6,6 @@ import './../../../styles/profile.scss'
 import { Toast } from '../../ToastAlert'
 import { SET_DONATION_LINK } from '../../../../redux/actions'
 import { useDispatch } from 'react-redux'
-import useDonations from '../../../../hooks/donations'
 
 const Profile = () => {
     const { getUserData, updateUserData } = useUserProfile()
@@ -16,12 +15,15 @@ const Profile = () => {
     const [colleges, setColleges] = useState([])
     const [formProcessing, setFormProcessing] = useState(false)
     const { getColleges } = useColleges()
-    const { getDonationReduxData } = useDonations()
+    const [donationLink, setDonationLink] = useState(null)
     const dispatch = useDispatch()
 
     useEffect(() => {
         (async () => {
             const userData = await getUserData()   
+            
+            setDonationLink(userData.collegeId.donationLink)
+
             setFormValues({...userData, password: '', collegeId: userData.collegeId._id})
             setOldFormValues({...userData, password: ''})
         })()
@@ -34,7 +36,7 @@ const Profile = () => {
           yearsArr.push(x)
         }
         setYears(yearsArr)
-      }, [])
+    }, [])
     
     // Fetches the list of all college institutions
     useEffect(() => {
@@ -97,9 +99,7 @@ const Profile = () => {
     }
 
     const copyDonationLink = () => {
-        let { donationLink } = getDonationReduxData()
-        
-        navigator.clipboard.writeText(`${process.env.REACT_APP_CLIENT_URL}/donate/${donationLink.replaceAll('"', '')}`);
+        navigator.clipboard.writeText(`${process.env.REACT_APP_CLIENT_URL}/donate/${donationLink}`);
 
         Toast.fire({
             icon: "success",

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useAxios from '../../../api/axios';
 import useAuth from '../../../hooks/auth';
 import { LOGOUT } from '../../../redux/actions';
@@ -7,44 +7,25 @@ import { useDispatch } from 'react-redux'
 
 const ProtectedAdminRoutes = ({children}) => {
   const { userIsAdmin, adminExists } = useAuth()
+  const isAuthAdmin = useMemo(() => (userIsAdmin()), [userIsAdmin])
   const { axiosPrivate } = useAxios()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [renderChildren, setRenderChildren] = useState(false)
-  
-  useEffect(() => {
-    if(userIsAdmin()){
-      (async () => {
-        try{
-          const response = await axiosPrivate.get('/auth/token/verify')
-      
-          // Token invalid or expired
-          if(true === response.data.data.error){
-            dispatch({type: LOGOUT})
-            navigate('/admin/login')
-          }else{
-            setRenderChildren(prev => (true))
-          }
-        }catch(err){
-          navigate('/admin/login')
-        }
-      
-      })()
-    }else{
-      (async () => {
-        // This checks to see if no admin has been registered
-        if(!await adminExists()){
-          setRenderChildren(prev => { return true })
-        }
-      })()
-    }
-  },[])
+  const location = useLocation()
 
-  if(renderChildren){
-    return children
-  }else{
-    return <></>
-  }
+  useEffect(() => {
+    (async () => {
+      const response = await axiosPrivate.get('/auth/token/verify')
+    
+      if(response.data.data.error === true){
+        dispatch({type: LOGOUT})
+        navigate('/admin/login')
+      }
+    
+    })()
+  }, [])
+
+  return (isAuthAdmin && children)
 };
 
 export default ProtectedAdminRoutes

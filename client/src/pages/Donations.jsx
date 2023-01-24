@@ -40,6 +40,9 @@ const Donations = () => {
                   })
                   
                 }
+                {
+                    donationsList.length === 0 && <tr><td colSpan="6">No donations found</td> </tr>
+                }
             </tbody>
             </table>
         </main>
