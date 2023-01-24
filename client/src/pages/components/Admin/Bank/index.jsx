@@ -51,10 +51,10 @@ const BankPage = () => {
             { bankHomeRoute
               && <div className="offset-md-1 offset-lg-1 col-lg-9 col-md-8 col-sm-12">
                 <div className="row">
-              {/* Button to add new bank and a tabular list of registered banks */}
-                <div className="col-12 mb-5 d-flex justify-content-md-end justify-content-center">
+              {/* Button not needed as the list of banks is obtained from the Payment API */}
+                {/* <div className="col-12 mb-5 d-flex justify-content-md-end justify-content-center">
                     <button type="button" className="btn btn-medium btn-success" onClick={() => { navigate('/admin/banks/register') }}><PlusSquareDotted className="text-white mx-3" /> Add Bank</button>
-                </div>
+                </div> */}
                 <br/>
                     {/* Table showing list of banks */}
                     <div className="col-md-12 table-responsive">
@@ -65,9 +65,6 @@ const BankPage = () => {
                                     <th>Name</th>
                                     <th>Slug</th>
                                     <th>Code</th>
-
-                        {/* Action buttons header */}
-                                    <th colSpan={2}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,18 +74,7 @@ const BankPage = () => {
                                         <td>{bank.name}</td>
                                         <td>{bank.slug}</td>
                                         <td>{bank.code}</td>
-
-                                    {/* Action buttons */}
-                                        <td colSpan={2} className="d-flex justify-content-around pb-4 align-items-start">
-                                            <button className="btn btn-small btn-primary d-flex" onClick={() => handleBankEdit(bank)}>
-                                                <PencilSquare className="fs-5 text-white mx-1" /> Edit
-                                            </button>
-
-                                            <button className="btn btn-small btn-danger d-flex" onClick={() => handleBankDelete(bank._id)}>
-                                                <TrashFill className="fs-5 text-white mx-1" /> Delete
-                                            </button>
-                                        </td>
-                                    </tr>;
+                                    </tr>
                                 })}
                             </tbody>
                         </table>
